@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/adminAuth.css' %}">
+    <title>Admin Authentication</title>
+</head>
+
+<body>
+
+
+    <div class="login">
+        <h1>ADMIN AUTHENTICATION</h1>
+        <form method="post" action="">
+            {% csrf_token %}
+            <p><input type="text" name="username" value="" placeholder="Username or Email" autocomplete="off"></p>
+            <p><input type="password" name="password" value="" placeholder="Password" autocomplete="off"></p>
+            <p class="submit"><input type="submit" name="commit" value="Login"></p>
+        </form>
+    </div>
+
+
+</body>
+
+</html>

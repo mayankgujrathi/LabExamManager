@@ -1,0 +1,161 @@
+{% extends 'pages/baseAdmin.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+  <ul class="collection">
+    <li class="collapsible-header"><h4>My Archives</h4></li>
+    <div id="__archive_list">
+      {% if data %}
+      {% for obj in data %}
+    <li class="collection-item">
+      <div>
+        <span id="{{obj.title}}_update">{{obj.title}}</span>
+        <a id="{{obj.title}}" class="clickable secondary-content">
+          <i class="material-icons teal-text">navigate_next</i>
+        </a>
+      </div>
+    </li>
+      {% endfor %}
+    </div>
+      {% else %}
+      <li class="collection-item">
+        <p class="center-align">No Archives</p>
+      </li>
+      {% endif %}
+  </ul>
+</div>
+{% endblock content %}
+
+{% block async %}
+<!-- floating -->
+<div  class="fixed-action-btn">
+  <button class="modal-trigger btn-floating" data-target="create_archive">
+    <i class="large material-icons">create_new_folder</i>
+  </button>
+</div>
+<!-- form modal -->
+<div id="create_archive" class="modal">
+  <div class="modal-content">
+    <h4 style="margin-bottom: 2.5rem;">New Archive</h4>
+    <form style="margin-top: 1rem">
+      <div class="input-field">
+        <input id="_archive_title" type="text" name="_archive_title"/>
+        <label for="_archive_title">Archive Name</label>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a class="modal-close waves-effect waves-teal btn-flat">Cancel</a>
+    <a id="submit_create_archive" class="waves-effect waves-teal btn-flat">Add</a>
+  </div>
+</div>
+<!-- form modal update -->
+<div id="update_archive" class="modal">
+  <div class="modal-content">
+    <h4 style="margin-bottom: 2.5rem;">Edit Archive</h4>
+    <form style="margin-top: 1rem">
+      <div class="input-field">
+        <input id="_update_archive_title" type="text" name="_update_archive_title"/>
+        <label class="active" for="_update_archive_title">Archive Name</label>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a class="modal-close waves-effect waves-teal btn-flat">Cancel</a>
+    <a id="submit_delete_archive" class="modal-close waves-effect waves-red btn-flat">Delete</a>
+    <a id="submit_update_archive" class="waves-effect waves-teal btn-flat">Update</a>
+  </div>
+</div>
+<script>
+  !function(){
+    document.addEventListener('DOMContentLoaded', () => {
+      // Modal create_branch
+      const _inst = M.Modal.init(document.getElementById('create_archive'))
+      document.addEventListener('keydown', event => {
+        if (event.ctrlKey && event.key === 'n') {
+          _inst.open()
+        }
+      })
+      // Create
+      document.getElementById('submit_create_archive').addEventListener('click', event => {
+        const element = document.getElementById('_archive_title')
+        if (element.value.length >= 5) {
+          _utils.post(`{% url 'admins-api-task-archives' %}`, {title: element.value})
+          .then(data => {
+            if (data.status === 201) {
+              _utils.success('Created Successfully!', () => _utils.deload())
+              _inst.close()
+            } else {
+              _utils.error(data.error)
+            }
+          })
+        } else {
+          _utils.warning('Archive name Should be minimum 5 long')
+        }
+      })
+      let current_data = ''
+      // delete
+      document.getElementById('submit_delete_archive').addEventListener('click', event => {
+        if (current_data) {
+          M.toast({
+            html: '<i class="material-icons yellow-text">warning</i>&ensp;Operation can\'t be reverted<button id="__delete_final" class="btn-flat toast-action">Delete</button>',
+            classes: 'rounded'
+          })
+          document.getElementById('__delete_final').addEventListener('click', event => {
+            M.Toast.dismissAll();
+            setTimeout(() => {
+              _utils.delete(`{% url 'admins-api-task-archives' %}`, {title: current_data})
+              .then(res => {
+                if (res.status === 202) {
+                  _utils.success(`${current_data} has been deleted!`, () => _utils.deload())
+                } else {
+                  _utils.error(res.error)
+                }
+              })
+            }, 380)
+          })
+        }
+      })
+      // update
+      document.getElementById('submit_update_archive').addEventListener('click', event => {
+        const element = document.getElementById('_update_archive_title')
+        console.log(element.value);
+        if (element.value.length >= 5) {
+          _utils.update(`{% url 'admins-api-task-archives' %}`, {
+            title: element.value,
+            prev_title: current_data,
+          })
+          .then(data => {
+            if (data.status === 202) {
+              _utils.success('Updated Successfully!')
+              _utils.deload()
+              _inst.close()
+            } else {
+              _utils.error(data.error)
+            }
+          })
+        } else {
+          _utils.warning('Archive name Should be minimum 5 long')
+        }
+      })
+
+      const _update_inst = M.Modal.init(document.getElementById('update_archive'))
+      // {% for obj in data %}
+      document.getElementById('{{obj.title}}_update').addEventListener('dblclick', event => {
+        document.getElementById('_update_archive_title').value = current_data = event.target.id
+        .slice(0, event.target.id.length - 7)
+        M.updateTextFields()
+        _update_inst.open()
+      })
+      // {% endfor %}
+    })
+
+    // {% for obj in data %}
+    document.getElementById('{{obj.title}}').addEventListener('click', event => {
+      _utils.mov(`{% url 'admins-task-archives' %}${event.target.parentNode.id}`)
+    })
+    // {% endfor %}
+  }()
+</script>
+{% endblock async %}

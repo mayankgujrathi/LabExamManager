@@ -1,0 +1,201 @@
+{% extends 'pages/baseAdmin.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row" style="width: 98%; margin: auto;">
+    <div class="col s3 collection" style="overflow-x: hidden; overflow-y: auto; height: 85vh;">
+        <div class="collapsible-header">
+            <h6>
+                <i id="_btn_back_sidenav" class="material-icons teal-text clickable left">arrow_back</i>
+                Tasks
+            </h6>
+        </div>
+        {% if sidenav_tasks %}
+        {% for task in sidenav_tasks %}
+        <div class="hoverable collection-item {% if task.active %} active {% endif %}">
+            <span id="{{task.id}}" class="clickable __task_btn responsive-text">{{task.title}}</span>
+            <span class="secondary-content">{{task.responses}}</span>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="collection-item">
+            <p class="center-align light">no task found</p>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col s9">
+        <h4 class="center-align">{{task_title}}</h4>
+        <h6 class="center-align">Not Corrected Tasks</h6>
+        <ul class="collapsible popout">
+        {% if submits_not %}
+        {% for submit in submits_not %}
+            <li>
+            <div class="collapsible-header">
+                <div class="__avatar_c" style="background-image: url({{submit.task.user.student_profile.image.url}});"></div>
+                <div class="responsive-text">
+                    <span style="font-weight: 500; color: #222;">{{submit.task.user.first_name}} {{submit.task.user.last_name}} ({{submit.task.user.username}})</span>
+                    <span style="font-size: small;" class="responsive-text block grey-text text-darken-1">{{submit.task.description}}</span>
+                </div>
+            </div>
+            <div class="collapsible-body row">
+                <div class="col s5 __p_desc">
+                    <div>
+                    {% for image in submit.images %}
+                        <img class="materialboxed" src="{{image.image.url}}">
+                        <br>
+                    {% endfor %}
+                </div>
+                </div>
+                <div class="col s7">
+                    <p data-position="right"
+                    data-tooltip="Task Description"
+                    class="__p_desc tooltipped"
+                    >{{submit.task.description}}</p>
+                </div>
+                <div class="center-align">
+                    <button id="{{submit.task.id}}" class="__correct_btn btn btn-flat white waves-effect waves-green green-text">Correct</button>
+                </div>
+            </div>
+            </li>
+            {% endfor %}
+            {% else %}
+                <div class="collection-item">
+                    <p class="center-align light">no responses</p>
+                </div>
+            {% endif %}
+        </ul>
+        <!-- corrected -->
+        <h6 class="center-align">Corrected Tasks</h6>
+        <ul class="collapsible popout">
+        {% if submits_done %}
+        {% for submit in submits_done %}
+            <li>
+            <div class="collapsible-header">
+                <div class="__avatar_c" style="background-image: url({{submit.task.user.student_profile.image.url}});"></div>
+                <div class="responsive-text">
+                    <span class="block" style="font-weight: 500; color: #222;">{{submit.task.user.first_name}} {{submit.task.user.last_name}} ({{submit.task.user.username}}) &ensp;<span class="blue-text">({{submit.task.got_marks}}/{{task_max_marks}})</span> </span>
+                    <span style="font-size: small;" class="responsive-text block grey-text text-darken-1">{{submit.task.description}}</span>
+                </div>
+            </div>
+            <div class="collapsible-body row">
+                <div class="col s5 __p_desc">
+                    <div>
+                    {% for image in submit.images %}
+                        <img class="materialboxed" src="{{image.image.url}}">
+                        <br>
+                    {% endfor %}
+                </div>
+                </div>
+                <div class="col s7">
+                    <p data-position="right"
+                    data-tooltip="Task Description"
+                    class="__p_desc tooltipped"
+                    >{{submit.task.description}}</p>
+                </div>
+                <div class="center-align">
+                    <button id="{{submit.task.id}}" class="__correct_btn btn btn-flat white waves-effect waves-green green-text">Re-Correct</button>
+                </div>
+            </div>
+            </li>
+            {% endfor %}
+            {% else %}
+                <div class="collection-item">
+                    <p class="center-align light">no corrected</p>
+                </div>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+<!-- modal code -->
+<div class="modal modal-fixed-footer" id="correct-modal">
+    <div class="modal-content">
+        <h4 style="margin-bottom: 3rem;">FeedBack Form</h4>
+        <div class="input-field validate">
+            <input type="number" id="__got_marks" min="0" max="{{task_max_marks}}" />
+            <label for="__got_marks">Marks</label>
+        </div>
+        <div class="input-field">
+            <textarea class="materialize-textarea" id="__correct_description"></textarea>
+            <label for="__correct_description">Note</label>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="modal-close btn btn-flat waves-effect white waves-yellow">Dismiss</button>
+        <button id="_correct_modal_submit" class="btn btn-flat waves-effect white waves-green">Submit</button>
+    </div>
+</div>
+{% endblock content %}
+
+{% block async %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('_btn_back_sidenav').addEventListener('click', e => {
+            let x = window.location.pathname.split('/')
+            x.pop()
+            _utils.mov(x.join('/'))
+        })
+        const _inst = M.Modal.init(document.getElementById('correct-modal'))
+        let current_student_task_id = ''
+        document.querySelectorAll('.__task_btn ').forEach(item => item
+        .addEventListener('click', event => {
+            let x = window.location.pathname.split('/')
+            x.pop()
+            x.push(event.target.id)
+            _utils.mov(x.join('/')) 
+        }))
+        document.querySelectorAll('.__correct_btn').forEach(element => element
+        .addEventListener('click', event => {
+            _inst.open()
+            current_student_task_id = event.target.id
+        }))
+        document.getElementById('_correct_modal_submit').addEventListener('click', event => {
+            const description = document.getElementById('__correct_description')
+            const got_marks_obj = document.getElementById('__got_marks')
+            const marks_min = parseFloat(got_marks_obj.getAttribute('min'))
+            const marks_max = parseFloat(got_marks_obj.getAttribute('max'))
+            const got_marks = got_marks_obj.value
+            if (got_marks < marks_min) {
+                _utils.warning(`marks cannot be less than ${marks_min}`)
+            } else if (got_marks > marks_max) {
+                _utils.warning(`marks cannot be greater than ${marks_max}`)
+            } else if (description.value.length < 5) {
+                _utils.warning('Note is shorter than 5 letters')
+            } else {
+                _utils.update(`{% url 'admins-api-admin-correct-task' %}`, {
+                    feedback: description.value,
+                    marks: got_marks,
+                    st_id: current_student_task_id,
+                    task_id: '{{task_id}}'
+                }).then(res => {
+                    if (res.status === 202) {
+                        _utils.success('Successfully Updated', () => _utils.deload(0))
+                        _inst.close()
+                    } else {
+                        _utils.error(res.error)
+                    }
+                })
+            }
+        })
+    })
+</script>
+<style>
+    .__avatar_c {
+        height: 40px;
+        width: 40px;
+        min-width: 40px;
+        border-radius: 50%;
+        margin-right: 1rem;
+        background-size: cover;
+    }
+    img {
+        width: 100%;
+        height: 80%;
+        max-height: 280px;
+    }
+    .__p_desc {
+        height: 280px;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+</style>
+{% endblock async %}

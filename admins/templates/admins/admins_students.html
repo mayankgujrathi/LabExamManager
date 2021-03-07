@@ -1,0 +1,290 @@
+{% extends 'pages/baseAdmin.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+  <nav style="margin-top: 1rem;" class="col s10">
+    <div class="nav-wrapper">
+      <form>
+        <div class="input-field teal">
+          <input id="search" type="search" value="" required>
+          <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+          <i class="material-icons">close</i>
+        </div>
+      </form>
+    </div>
+  </nav>
+  <br>
+  <i 
+    data-position="right"
+    data-tooltip="Print as Table"
+    data-target="_print_detail"
+    class="material-icons right blue-text clickable tooltipped modal-trigger"
+  >print</i>
+  <i
+    data-position="bottom"
+    data-tooltip="Save Students"
+    data-target="_save_students"
+    class="material-icons right grey-text text-darken-1 clickable tooltipped modal-trigger"
+  >save</i>
+  <i
+    data-position="left"
+    data-tooltip="View Saves"
+    id="__open_sessions"
+    class="material-icons right blue-grey-text text-darken-1 clickable tooltipped"
+  >view_list</i><br>
+  <span class="block center-align light" style="margin-top: .85rem;">This page data is not persistent, might change for many reasons, it is recomended to take a print or to save for a persistent copy.</span>
+  <ul id="__data_insert" class="collapsible popout" style="margin-top: 1rem;">
+  </ul>
+  <div  style="visibility: hidden;" class="section-to-print">
+    <h3 id="__title_session" class="center-align"></h3>
+    <h5 class="center-align">Attended Students at <span id="__time_insert"></span></h5>
+    <p id="__description_session" class="center-align"></p>
+    <table class="centered" style="width: 100%;">
+      <thead>
+        <tr>
+          <th>PIN</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Year</th>
+          <th>Semester</th>
+          <th>Shift</th>
+          <th>Mail Address</th>
+          <th>Computer Name</th>
+          <th>Total Tasks</th>
+          <th>Completed Tasks</th>
+          <th>Total Task Marks</th>
+          <th>Task Marks</th>
+          <th>Total Average Task Marks</th>
+          <th>Average Task Marks</th>
+        </tr>
+      </thead>
+      <tbody id="_print_target">
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="_print_detail" class="modal modal-fixed-footer">
+  <div class="modal-content">
+    <h5 style="margin-bottom: 3rem;">Print Details</h5>
+    <div class="input-field">
+      <input type="text" id="__title_print_session">
+      <label for="__title_print_session">Title</label>
+    </div>
+    <div class="input-field">
+      <textarea id="__description_print_session" class="materialize-textarea"></textarea>
+      <label for="__description_print_session">Description</label>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a class="modal-close btn btn-flat white waves-effect waves-yellow">Cancel</a>
+    <a id="_print_btn_action" class="btn btn-flat white waves-effect waves-green">Print</a>
+  </div>
+</div>
+<!-- task_save -->
+<div id="_save_students" class="modal">
+  <div class="modal-content">
+    <h5 style="margin-bottom: 3rem;">Save Students</h5>
+    <div class="input-field">
+      <input type="text" id="__title_save_student">
+      <label for="__title_save_student">Title</label>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a class="modal-close btn btn-flat white waves-effect waves-yellow">Cancel</a>
+    <a id="_save_btn_action" class="btn btn-flat white waves-effect waves-green">Save</a>
+  </div>
+</div>
+{% endblock content %}
+
+{% block async %}
+<script>
+  !function() {
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('__open_sessions').addEventListener('click', e => {
+        _utils.get(`{% url 'admins-api-save-students' %}`).then(res => {
+          if (res.status === 202) {
+            const id = res.error
+            _utils.mov(`{% url 'admins-students' %}${id}`)
+          } else {
+            _utils.error(res.error)
+          }
+        })
+      })
+      const _save_inst = M.Modal.init(document.getElementById('_save_students'))
+      document.getElementById('_save_btn_action').addEventListener('click', e => {
+        const title = document.getElementById('__title_save_student')
+        if (title.value.length < 3) {
+          _utils.warning('Title is shorter than 3 letters')
+        } else {
+          _utils.info('saving...')
+          setTimeout(() => {
+            _utils.post(`{% url 'admins-api-save-students' %}`, {title: title.value}).then(res => {
+              if (res.status === 200) {
+                _utils.dismiss(
+                  () => _utils.success('Saved!')
+                )
+                title.value = ''
+                _save_inst.close()
+              } else {
+                _utils.dismiss(
+                  () => _utils.error(res.error)
+                )
+              }
+            })
+          }, 500)
+        }
+      })
+      const _inst = M.Modal.init(document.getElementById('_print_detail'))
+      document.getElementById('_print_btn_action').addEventListener('click', e => {
+        document.getElementById('__time_insert').innerHTML = new Date().toGMTString()
+        const title = document.getElementById('__title_print_session')
+        const description = document.getElementById('__description_print_session')
+        const print_title = document.getElementById('__title_session')
+        const print_description = document.getElementById('__description_session')
+        if (title.value.length < 5) {
+          _utils.warning('Title is Shorter than 5 letters')
+        } else if (description.value.length < 5) {
+          _utils.warning('Description is Shorter than 5 letters')
+        } else {
+          print_title.innerHTML = title.value
+          print_description.innerHTML = description.value
+          _inst.close()
+          title.value = description.value = ''
+          window.print()
+        }
+      })
+      const getItemPrint = (
+        username, 
+        first_name, 
+        last_name,
+        email,
+        hostname,
+        all_tasks,
+        completed_tasks,
+        total,
+        got,
+        login_time,
+        total_avg,
+        got_avg,
+        year, 
+        semester, 
+        shift
+      ) => `
+      <tr> 
+        <td>${username || 'Not Provided'}</td>
+        <td>${first_name || 'Not Provided'}</td>
+        <td>${last_name || 'Not Provided'}</td>
+        <td>${year || 'Not Provided'}</td>
+        <td>${semester || 'Not Provided'}</td>
+        <td>${shift || 'Not Provided'}</td>
+        <td>${email || 'Not Provided'}</td>
+        <td>${hostname || 'Not Provided'}</td>
+        <td>${all_tasks}</td>
+        <td>${completed_tasks}</td>
+        <td>${total}</td>
+        <td>${got}</td>
+        <td>${total_avg}</td>
+        <td>${got_avg}</td>
+      </tr>
+      `
+      const getItem = (username, image, email, phone, address, hostname, all_task, com_tasks, total, got,  login_time,total_avg, got_avg, year, semester, shift) => `
+      <li>
+        <div class="collapsible-header avatar">
+          <div class="__avatar circle" style="background-image: url(${image});">
+          </div>
+          <span class="__title">${username}
+            <br/><span style="font-size: .9rem; font-weight: 400;">Of ${year} Year ${semester} Semester ${shift} Shift (last logout ${login_time})</span>
+          </span>
+        </div>
+        <div class="collapsible-body">
+          <b>Logged into PC </b><span class="right">${hostname || 'Not Provided'}</span>
+          <br/><b>Mail</b><span class="right">${email || 'Not Provided'}</span>
+          <br/><b>Phone</b><span class="right">${phone || 'Not Provided'}</span>
+          <br/><b>Address</b><span class="right">${address || 'Not Provided'}</span>
+          <br/><b>Completed Tasks</b><span class="right">${com_tasks}/${all_task}</span>
+          <br/><b>Task Marks</b><span class="right">${got}/${total}</span>
+          <br/><b>Average Task Marks</b><span class="right">${got_avg}/${total_avg}</span>
+        </div>
+      </li>`
+      const renderData = data => {
+        const element = document.getElementById('__data_insert')
+        const elementPrint = document.getElementById('_print_target')
+        let content = '<li class="collection-item center-align">No Students Found</li>'
+        if (data.students.length > 0) {
+          content = ''
+          print_content = ''
+          data.students.forEach(item => {
+            content += getItem(
+              `${item.first_name} ${item.last_name} (${item.username})`,
+              item.image,
+              item.email,
+              item.phone,
+              item.address,
+              item.hostname,
+              item.all_tasks_count,
+              item.submitted_tasks_count,
+              item.total_marks,
+              item.got_marks,
+              item.last_login,
+              item.total_avg,
+              item.got_avg,
+              item.current_year,
+              item.current_semester,
+              item.current_shift,
+            )
+            print_content += getItemPrint(
+              item.username,
+              item.first_name,
+              item.last_name,
+              item.email,
+              item.hostname,
+              item.all_tasks_count,
+              item.submitted_tasks_count,
+              item.total_marks,
+              item.got_marks,
+              item.last_login,
+              item.total_avg,
+              item.got_avg,
+              item.current_year,
+              item.current_semester,
+              item.current_shift,
+            )
+          })
+        }
+        element.innerHTML = content
+        elementPrint.innerHTML = print_content
+      }
+      const getData = () => _utils.get(`{% url 'admins-api-students-list-view' %}`).then(renderData)
+      getData()
+      document.getElementById('search').addEventListener('input', event => {
+        if (event.target.value && event.target.value.length <= 0) {
+          getData()
+          return
+        }
+        _utils.post(`{% url 'admins-api-students-list-view' %}`, {text: event.target.value}).then(data => {
+          if (data.students) {
+            renderData(data)
+          }
+        })
+      })
+      document.querySelectorAll('.__btn_profile').forEach(i => i.addEventListener('click', event => {
+        console.log(event.target.id);
+      }))
+    })
+  }()
+</script>
+<style>
+  .__avatar {
+      height: 40px;
+      width: 40px;
+      background-size: cover;
+  }
+  .__title {
+    font-size: 1.2rem;
+    font-weight:  500;
+    padding-left: .5rem;
+  }
+</style>
+{% endblock async %}

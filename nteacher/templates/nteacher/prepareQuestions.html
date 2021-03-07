@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Teacher - Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="{% static 'CSS/bootstrap.css' %}">
+  <link href="{% static 'CSS/mycss.css' %}" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'CSS/fontawesome/css/fontawesome.min.css' %}"/>
+  <link rel="stylesheet" href="{% static 'CSS/animate.min.css' %}" />
+</head>
+<body>
+  {% include 'nteacher/navbar.html' %}
+
+<div id="prepareTestQuestionScreen" class="mt-md-5 mt-sm-5 mt-lg-5 mt-xl-5">
+          <h3 class="heading1 mb-5">{{ subject }}</h3>
+
+        <div id="mcq">
+            <form action="../Questions/" method="post">
+              {% csrf_token %}  
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text" id="inputGroup-sizing-lg"> {{ session }}] Type a Question</span>
+                  <input type="text" name="question" class="form-control" placeholder="What is library used to perform Mathematical operations in python?" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" required>
+                  <select name="typeofquestion" id="typeofquestion" >
+                    <option value="MCQ" selected>Multiple Choice Question</option>
+                    <option value="FIB">Fill in the Blanks</option>
+                </select>
+                </div>
+                <h5 style="font-size: 17px;opacity: 0.7;" class="m-3">
+                  <span><b>Note:</b></span>Input the Options and Select the Correct One
+                </h5>
+
+                <div class="input-group my-input-group p-1 w-75" >
+                  <div class="input-group-text my-input-group1">
+                    <input class="form-check-input" type="radio" value="1" aria-label="Radio button for following text input" name="ChooseCorrectone" required>
+                  </div>
+                  <input type="text" name="option1" class="form-control" aria-label="Text input with radio button" placeholder="numpy" required>
+                </div>
+
+                <div class="input-group my-input-group p-1 w-75">
+                  <div class="input-group-text">
+                    <input class="form-check-input" type="radio" value="2" aria-label="Radio button for following text input" name="ChooseCorrectone" required>
+                  </div>
+                  <input type="text" name="option2" class="form-control" aria-label="Text input with radio button" placeholder="PIL" required>
+                </div>
+
+                <div class="input-group my-input-group p-1 w-75">
+                  <div class="input-group-text">
+                    <input class="form-check-input" type="radio" value="3" aria-label="Radio button for following text input" name="ChooseCorrectone" required>
+                  </div>
+                  <input type="text" name="option3" class="form-control" aria-label="Text input with radio button" placeholder="Selenium" required>
+                </div>
+
+                <div class="input-group my-input-group p-1 w-75">
+                  <div class="input-group-text">
+                    <input class="form-check-input" type="radio" value="4" aria-label="Radio button for following text input" name="ChooseCorrectone" required>
+                  </div>
+                  <input type="text" name="option4" class="form-control" aria-label="Text input with radio button" placeholder="pandas" required>
+                </div>
+                <div class="text-center">
+                  <span class="submit">
+                    <button type="submit"  class="btn btn-success col-2 btn-md" name="mcq_submit">
+                      Submit
+                    </button>
+                  </span>
+                  <span class="previewQuestionbtn">
+                    <button class="btn btn-success col-lg-2 col-md-4 col-sm-4 btn-md" type="button" onclick="location.href='../previewQuestions/'">
+                      Preview Questions
+                    </button>
+                  </span>
+                </div>
+            </form>
+        </div>
+
+      <div id="fib" class="none">
+          <form action="../Questions/" method="post">
+            {% csrf_token %} 
+              <div class="input-group input-group-lg">
+                <span class="input-group-text" id="inputGroup-sizing-lg"> {{ session }}] Type a Question</span>
+                <input type="text" name="question"  onkeyup="validate(this)" class="form-control" placeholder="What is library used to perform Mathematical operations in python?" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" required>
+                <select name="typeofquestion1" id="typeofquestion1" >
+                    <option value="MCQ">Multiple Choice Question</option>
+                    <option value="FIB" selected>Fill in the Blanks</option>
+                </select>
+              </div>
+
+            <div class="input-group my-input-group p-1 w-50">
+                  <span class="input-group-text">Enter Answer</span>
+                  <input type="text" name="blank"  class="form-control" placeholder="numpy" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" required>
+            </div>
+
+            <div class="text-center">
+              <span class="submit">
+                <button type="submit"  class="btn btn-success col-2 btn-md" name="fib_submit">
+                  Submit
+                </button>
+              </span>
+              <span class="previewQuestionbtn">
+                <button class="btn btn-success col-lg-2 col-md-4 col-sm-4 btn-md" type="button" onclick="location.href='../previewQuestions/'">
+                  Preview Questions
+                </button>
+              </span>
+            </div>
+          </form>
+      </div>
+</div>
+<script src="{% static 'JS/jquery.min.js' %}"></script>
+<script src="{% static 'CSS/fontawesome/js/all.min.js' %}" ></script>
+<script src="{% static 'JS/popper.min.js' %}" ></script>
+<script src="{% static 'JS/bootstrap.bundle.js' %}" ></script>
+<script src="{% static 'JS/bootstrap1.min.js' %}"></script>
+<script src="{% static 'JS/myjs.js' %}" ></script>
+<script>
+!function(){
+  document.addEventListener('DOMContentLoaded',function(){
+    document.getElementById('typeofquestion').addEventListener('click',function(){
+      let val = document.getElementById('typeofquestion')
+      if (typeof(val.selectedIndex) != 'undefined'){
+        if(val.selectedIndex == 0){
+          document.getElementById("fib").classList.add("none")
+          document.getElementById("mcq").classList.remove("none")
+        }
+        if(val.selectedIndex == 1){
+          document.getElementById("mcq").classList.add("none")
+          document.getElementById("fib").classList.remove("none")
+        }
+      }
+    })
+
+    document.getElementById('typeofquestion1').addEventListener('click',function(){
+      let val = document.getElementById('typeofquestion1')
+      if (typeof(val.selectedIndex) != 'undefined'){
+        if(val.selectedIndex == 0)
+          document.getElementById("fib").classList.add("none")
+          document.getElementById("mcq").classList.remove("none")
+        }
+        if(val.selectedIndex == 1){
+          document.getElementById("mcq").classList.add("none")
+          document.getElementById("fib").classList.remove("none")
+        }
+    })
+  })
+}()
+</script>
+</body>
+</html>

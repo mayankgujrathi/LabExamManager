@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="{% static 'CSS/bootstrap.css' %}" rel="stylesheet" />
+    <link href="{% static 'CSS/mycss.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'CSS/fontawesome/css/fontawesome.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'CSS/animate.min.css' %}" />
+    <title>Teacher</title>
+  </head>
+  <body>
+    {% include 'nteacher/navbar.html' %}
+      
+    <div id="prepareTest" class="mt-md-5 mt-sm-5 mt-lg-5">
+    {% if messages %}
+                {% for message in messages %}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                     {% ifequal message.tags 'somethingWentWrong error' %}
+                            <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
+                                <strong>{{message}}</strong>,Please Go back and Check again!
+                                <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+                            </div> 
+                        {% endifequal %}
+                    {% endif %}
+                {% endfor %}
+      {% endif %}
+      <div class="heading1">Prepare Test</div>
+      <div id="prepareTestinitialscreen">
+        <h3 class="heading2">Welcome!</h3>
+        <h5 class="caption mb-md-5 mb-sm-5">Please Fill up the following Details To Prepare Test</h5>
+        
+        <form id="form1" name="Form1" method="post" action=".">
+          {% csrf_token %}
+          <div class="input-group input1">
+            <span class="input-group-text">Enter Date and <br>Time of Exam Conduct</span>
+            <div class="form-floating input">
+              <input type="datetime-local" class="form-control" id="dateofexam" placeholder="Enter Date and time" name="dateofexam" required/>
+              <label for="subject">Date of Exam</label>
+            </div>
+          </div>
+
+          <div class="input-group input1">
+            <span class="input-group-text">Enter Exam Name</span>
+            <div class="form-floating input">
+              <input type="text" class="form-control" id="examname" placeholder="Enter Exam Name Ex.slip test-1" name="examname" required/>
+              <label for="examname"><i>Example : Slip Test 1</i></label>
+            </div>
+          </div>
+          <div class="text-center mx-5 mb-3 none" id="texterror1">
+            <p class="font-weight-light text-danger text-capitalize text-center alert-danger py-2 mx-5" id="texterror1">The Test Name must contain a number at Last.</p>
+          </div>
+          <div class="text-center mx-5 mb-5 none" id="texterror2">
+            <p class="font-weight-light text-danger text-center alert-danger py-2 mx-5" id="texterror2">The Test with this Test name was already Conducted or Created!</p>
+          </div>
+          
+          <!-- Modal -->
+          <div class="modal fade" id="Batch_sem_shift_modal" tabindex="-1" aria-labelledby="Batch_sem_shift_modalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="Batch_sem_shift_modalLabel">SELECT DETAILS</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-5">
+
+                {% if sub %}
+                    <p class="fw-light">Select Subject </p>
+                    <select class="form-select" aria-label="subject" name="subject">
+                    {% for s in sub %}
+                      <option value="{{ s }}" selected>{{ s }}</option>
+                    {% endfor %}
+                    </select>
+                  
+                    <p class="fw-light mt-4">Enter Batch</p>
+                    <div class="form-floating">
+                      <input type="number" class="form-control" id="batch" placeholder="Enter Batch Ex.18" name="batch" value="18"/>
+                      <label for="batch"><i>Example : 18</i></label>
+                    </div>
+
+                    {% if sem %}
+                      <p class="fw-light mt-4">Select Semester</p>
+                      {% for s in sem %}
+                      <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" value="{{ s }}" name="semester" checked>
+                          <label class="form-check-label">{{ s }}</label>
+                        </div>
+                      {% endfor %}
+
+                      <p class="fw-light mt-4">Select Shift</p>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" id="ShiftRadio1" value="1" name="shift" checked>
+                          <label class="form-check-label" for="ShiftRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" id="ShiftRadio2" value="2" name="shift">
+                          <label class="form-check-label" for="ShiftRadio2">2</label>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                </div>      
+                <div class="modal-footer">
+                  <a type="button" class="text-success fs-5 text-decoration-none mx-3" data-bs-dismiss="modal">OK</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="input-group input1">
+            <span class="input-group-text">Enter Total Questions</span>
+            <div class="form-floating input">
+              <input type="number" class="form-control"  min="3" id="totalquestion" placeholder="Enter total Questions Ex.20" name="totalquestion" required/>
+              <label for="totalquestion"><i>Total Questions</i></label>
+            </div>
+          </div>
+
+          <div class="input-group input1">
+            <span class="input-group-text">Enter Total Time in min</span>
+            <div class="form-floating input">
+              <input type="number" class="form-control"  id="totaltime" placeholder="Enter total time Ex.30" name="totaltime" required/>
+              <label for="totaltime"><i>Total Time in Minutes <i>Ex: 30</i></i></label>
+            </div>
+          </div>
+          <div class="container mt-1 mt-lg-1 mx-4">
+                    <div class="row align-items-center text-center p-0">
+                        <div class="col-2 col-md-0 col-sm-0"></div>
+                        <div class="col-lg-8 col-md-12 col-sm-12 align-items-center">
+                            <a type="button" class="btn-lg col-7 text-dark text-decoration-none border border-1 mx-2" data-bs-toggle="modal" data-bs-target="#Batch_sem_shift_modal">
+                            <i class="fas fa-user-graduate mx-4 mx-md-1 mx-sm-0" style="font-size:25px;"></i>
+                            SELECT BATCH-SEMESTER-SHIFT
+                            </a>
+                            <button type="submit" id="btn-prepare" class="btn disabled btn-success btn-lg col-3 my-4 my-md-0 my-sm-0" >
+                            PREPARE TEST
+                            </button>
+                        </div>
+                    </div>
+                </div> 
+        </form>
+      </div>
+    </div>
+  
+  <script>window.$ = window.jQuery = require('jquery');</script>
+    <script src="{% static 'JS/jquery.min.js' %}" ></script>
+    <script src="{% static 'CSS/fontawesome/js/all.min.js' %}"></script>
+    <script src="{% static 'JS/popper.min.js' %}" ></script>
+    <script src="{% static 'JS/bootstrap.bundle.js' %}" ></script>
+    <script src="{% static 'JS/bootstrap1.min.js' %}" ></script>
+    <script src="{% static 'JS/myjs.js' %}" ></script>
+    <script>
+    !function(){
+      document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('examname').addEventListener('change',function(){
+          let tests = {{ Tests|safe }}
+          let subs = document.forms['Form1']['subject'].value
+          if( tests != "none" && subs !="none"){
+            let input = document.getElementById('examname').value.trim()
+            let flag = false
+            if (!isNaN(input.trim().slice(-1))){
+              document.getElementById('texterror1').classList.add("none")
+              document.querySelector("#btn-prepare").classList.remove("disabled")
+              for(let e of tests){ 
+                  if(e.fields.Subject.trim().toUpperCase() === subs.trim().toUpperCase()){
+                    input1 = parseInt(input.charAt(input.length - 1))
+                    num1 = parseInt(e.fields.ExamName.trim().charAt(e.fields.ExamName.trim().length - 1))
+                  if (input1 == num1) {
+                      flag = true
+                  }
+                }
+              }
+              if(flag) {
+                document.getElementById('texterror2').classList.remove("none")
+                document.querySelector("#btn-prepare").classList.add("disabled")
+              }
+              else {
+                document.getElementById('texterror2').classList.add("none")
+                document.querySelector("#btn-prepare").classList.remove("disabled")
+              }
+          }
+          else{
+            document.getElementById('texterror1').classList.remove("none")
+            document.querySelector("#btn-prepare").classList.add("disabled")
+          }
+         }
+        })
+
+        document.querySelectorAll("input").forEach(item => {
+          item.addEventListener("input",function(){
+          let ele2 = document.getElementById('texterror2').classList.contains('none')
+          if(item.value === ""){
+            item.classList.add("is-invalid")
+            if (!ele2)
+            document.querySelector("#btn-prepare").classList.add("disabled")
+          }
+          else{
+            item.classList.remove("is-invalid")
+            if(ele2)document.querySelector("#btn-prepare").classList.remove('disabled')
+            }      
+          })
+        })
+      })
+    }() 
+    </script>
+  </body>
+</html>

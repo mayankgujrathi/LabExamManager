@@ -1,0 +1,11 @@
+{% extends "kstudent/homePage.html" %}
+
+{% block changeContent1 %}
+
+    <div>
+        <h3>Looks like you haved paused your exam. Click below button to continue.</h3>
+        {% comment %}<button class="btn btn-custom one" onclick="location.href='/kstudent/performOperations';">Resume Exam</button>{% endcomment %}
+        <button class="btn btn-custom one" onclick="location.href='/kstudent/askAdminAuth';">Resume Exam</button>
+    </div>
+
+{% endblock %}

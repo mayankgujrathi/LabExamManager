@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbarCSS.css' %}">
+    <title>Home</title>
+</head>
+
+<body>
+    {% include "kstudent/navbar.html" %}
+
+    <div class="makeFlex">
+        {% block changeContent1 %}
+
+        {% if not message %}
+
+        <div>
+            <h3>Wohoo! No Exams yet, Check out the previous results!</h3>
+            <button class="btn btn-custom one" onclick="location.href='/kstudent/history/?semester=all';">Check Here</button>
+        </div>
+
+        {% endif %}
+
+        {% if message %}
+
+        <div>
+            <h3>Wait for few minutes until the exam starts.</h3>
+            {% include 'kstudent/examTimer.html' %}
+        </div>
+
+        {% endif %}
+
+        {% endblock %}
+
+    </div>
+</body>
+
+</body>
+<script src="{% static 'bootstrap/js/bootstrap.bundle.js' %}"></script>
+<script src="{% static 'js/remainingTimeForExamStart.js' %}"></script>
+<script src="{% static 'js/all.min.js' %}"></script>
+<script src="{% static 'js/navbarJS.js' %}"></script>
+<script>
+    {% if timeRemaining %}
+        window.onload = () => {
+            customOnloadRemainingTimeForExamStartFuncTrigger({{ timeRemaining }});
+        }
+    {% endif %}
+</script>
+
+</html>

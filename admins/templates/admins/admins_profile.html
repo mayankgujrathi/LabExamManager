@@ -1,0 +1,658 @@
+{% extends 'pages/baseAdmin.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="margin: 1rem auto">
+    <input type="file" name="image" accept="image/*"  id="_p_file" style="display:none">
+    <label for="_p_file" draggable="false" class="rounded center-align _profile_image clickable"></label>
+  <!-- </form> -->
+  <div class="collection">
+    <div class="collection-item">
+      <h5>Computer Name</h5>
+      <span>{{user.admin_profile.hostname}}</span>
+    </div>
+    <div class="collection-item">
+      <h5>Username</h5>
+      <span>{{user.username}}</span>
+    </div>
+    <div class="collection-item">
+      <h5 id="_first_name">First Name</h5>
+      <span id="_first_name_value">{{user.first_name}}</span>
+    </div>
+    <div class="collection-item">
+      <h5 id="_last_name">Last Name</h5>
+      <span id="_last_name_value">{{user.last_name}}</span>
+    </div>
+    <div class="collection-item">
+      <h5>Email</h5>
+      <span>{{user.email}}</span>
+    </div>
+
+
+    <div class="collection-item">
+      <h5 id="_address">Address</h5>
+      {% if user.admin_profile.address %}
+      <span id="_address_value">{{user.admin_profile.address}}</span>
+      {% else %}
+      <span id="_address_value"></span>
+      {% endif %}
+    </div>
+    <div class="collection-item">
+      <h5 id="_phone">Contact number</h5>
+      {% if user.admin_profile.phone %}
+      <span id="_phone_value">{{user.admin_profile.phone}}</span>
+      {% else %}
+      <span id="_phone_value"></span>
+      {% endif %}
+    </div>
+    <!-- special -->
+    <div class="collection-item">
+      <h5 style="margin-bottom: 1rem;">Student of Years</h5>
+      <label style="padding-left: 1.5rem;">
+      <input type="checkbox" id="year_1"
+        onchange="__years_changed()"
+        {% if teach_years.first %}
+          checked 
+        {% endif %}
+          />
+        <span>First Year</span>
+      </label>
+  
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="year_2"
+        onchange="__years_changed()"
+        {% if teach_years.second %}
+          checked 
+        {% endif %}
+          />
+      <span>Second Year</span>
+      </label>
+  
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="year_3"
+        onchange="__years_changed()"
+        {% if teach_years.third %}
+         checked
+        {% endif %}
+         />
+        <span>Third Year</span>
+      </label>
+    </div>
+
+    <div class="collection-item">
+      <h5 style="margin-bottom: 1rem;">Student of Semesters</h5>
+      <label style="padding-left: 1.5rem;">
+      <input type="checkbox" id="sem_1"
+      onclick="__sem_changed()"
+      {% if teach_sem.first %}
+        checked 
+      {% endif %}
+        />
+      <span>I Sem</span>
+      </label>
+  
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="sem_2"
+      onclick="__sem_changed()"
+        {% if teach_sem.second %}
+          checked 
+        {% endif %}
+          />
+      <span>II Sem</span>
+      </label>
+  
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="sem_3"
+      onclick="__sem_changed()"
+        {% if teach_sem.third %}
+         checked
+        {% endif %}
+         />
+        <span>III Sem</span>
+      </label>
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="sem_4"
+      onclick="__sem_changed()"
+        {% if teach_sem.fourth %}
+         checked
+        {% endif %}
+         />
+        <span>IV Sem</span>
+      </label>
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="sem_5"
+      onclick="__sem_changed()"
+        {% if teach_sem.fifth %}
+         checked
+        {% endif %}
+         />
+        <span>V Sem</span>
+      </label>
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="sem_6"
+      onclick="__sem_changed()"
+        {% if teach_sem.sixth %}
+         checked
+        {% endif %}
+         />
+        <span>VI Sem</span>
+      </label>
+    </div>
+    <!-- shifts -->
+    {% if teach_sem.first %}
+    <div class="collection-item">
+      <h5 style="margin-bottom: 1rem;">I SEM Shifts</h5>
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="1_shift_1"
+          onchange="__shifts_changed()"
+          {% if teach_shifts.first_shift_one %}
+            checked 
+          {% endif %}
+            />
+        <span>1st Shift</span>
+      </label>
+  
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="1_shift_2"
+        onchange="__shifts_changed()"
+        {% if teach_shifts.first_shift_two %}
+          checked 
+        {% endif %}
+          />
+        <span>2nd Shift</span>
+      </label>
+    </div>
+    {% endif %}
+    {% if teach_sem.second %}
+    <div class="collection-item">
+      <h5 style="margin-bottom: 1rem;">II SEM Shifts</h5>
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="2_shift_1"
+          onchange="__shifts_changed()"
+          {% if teach_shifts.second_shift_one %}
+            checked 
+          {% endif %}
+            />
+        <span>1st Shift</span>
+      </label>
+  
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="2_shift_2"
+        onchange="__shifts_changed()"
+        {% if teach_shifts.second_shift_two %}
+          checked 
+        {% endif %}
+          />
+        <span>2nd Shift</span>
+      </label>
+    </div>
+    {% endif %}
+    {% if teach_sem.third %}
+    <div class="collection-item">
+      <h5 style="margin-bottom: 1rem;">III SEM Shifts</h5>
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="3_shift_1"
+          onchange="__shifts_changed()"
+          {% if teach_shifts.third_shift_one %}
+            checked 
+          {% endif %}
+            />
+        <span>1st Shift</span>
+      </label>
+  
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="3_shift_2"
+        onchange="__shifts_changed()"
+        {% if teach_shifts.third_shift_two %}
+          checked 
+        {% endif %}
+          />
+        <span>2nd Shift</span>
+      </label>
+    </div>
+    {% endif %}
+    {% if teach_sem.fourth %}
+    <div class="collection-item">
+      <h5 style="margin-bottom: 1rem;">IV SEM Shifts</h5>
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="4_shift_1"
+          onchange="__shifts_changed()"
+          {% if teach_shifts.fourth_shift_one %}
+            checked 
+          {% endif %}
+            />
+        <span>1st Shift</span>
+      </label>
+  
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="4_shift_2"
+        onchange="__shifts_changed()"
+        {% if teach_shifts.fourth_shift_two %}
+          checked 
+        {% endif %}
+          />
+        <span>2nd Shift</span>
+      </label>
+    </div>
+    {% endif %}
+    {% if teach_sem.fifth %}
+    <div class="collection-item">
+      <h5 style="margin-bottom: 1rem;">V SEM Shifts</h5>
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="5_shift_1"
+          onchange="__shifts_changed()"
+          {% if teach_shifts.fifth_shift_one %}
+            checked 
+          {% endif %}
+            />
+        <span>1st Shift</span>
+      </label>
+  
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="5_shift_2"
+        onchange="__shifts_changed()"
+        {% if teach_shifts.fifth_shift_two %}
+          checked 
+        {% endif %}
+          />
+        <span>2nd Shift</span>
+      </label>
+    </div>
+    {% endif %}
+    {% if teach_sem.sixth %}
+    <div class="collection-item">
+      <h5 style="margin-bottom: 1rem;">VI SEM Shifts</h5>
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="6_shift_1"
+          onchange="__shifts_changed()"
+          {% if teach_shifts.sixth_shift_one %}
+            checked 
+          {% endif %}
+            />
+        <span>1st Shift</span>
+      </label>
+  
+      <label style="padding-left: 1.5rem;">
+        <input type="checkbox" id="6_shift_2"
+        onchange="__shifts_changed()"
+        {% if teach_shifts.sixth_shift_two %}
+          checked 
+        {% endif %}
+          />
+        <span>2nd Shift</span>
+      </label>
+    </div>
+    {% endif %}
+  </div>
+  <p  style="margin-bottom: 10%;">
+    <b>Note:</b> Please fill the above options correctly, this will allow your Tasks to be
+    appear in respective Students!
+  </p>
+</div>
+{% endblock content %}
+{% block async %}
+<div id="__edit" class="modal">
+  <div class="modal-content">
+    <h4 style="margin-bottom: 2.5rem;" id="__edit_title"></h4>
+    <form style="margin-top: 1rem">
+      <div class="input-field">
+        <input id="_edit_value" type="text" name="_edit_value" value=""/>
+        <label for="_edit_value" id="__edit_label"></label>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a id="__edit_dismiss" class="modal-close waves-effect waves-teal btn-flat">Dismiss</a>
+    <a id="__edit_first_name" style="display: none;" class="waves-effect waves-teal btn-flat">Change</a>
+    <a id="__edit_last_name" style="display: none;" class="waves-effect waves-teal btn-flat">Change</a>
+    <a id="__edit_address" style="display: none;" class="waves-effect waves-teal btn-flat">Change</a>
+    <a id="__edit_phone" style="display: none;" class="waves-effect waves-teal btn-flat">Change</a>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('__edit')
+    let _edit_title = document.getElementById('__edit_title')
+    let _edit_label = document.getElementById('__edit_label')
+    let _edit_value = document.getElementById('_edit_value')
+    let _edit_btn = document.getElementById('__edit_dismiss')
+    let _inst = ''
+    document.getElementById('_first_name').addEventListener('dblclick', event => {
+      _edit_title.innerHTML = 'Edit First Name'
+      _edit_label.innerHTML = 'First Name'
+      _edit_btn = document.getElementById('__edit_first_name')
+      _edit_btn.style.display = 'inline'
+      const _element = document.getElementById('_first_name_value')
+      _edit_value.value = _element.innerHTML
+      current_item = {value: _element.innerHTML, name: 'first_name'}
+      M.updateTextFields()
+      _inst = M.Modal.init(modal, {
+        onCloseEnd: () => _edit_btn.style.display = 'none' 
+      })
+      _inst.open()
+    })
+    document.getElementById('_last_name').addEventListener('dblclick', event => {
+      _edit_title.innerHTML = 'Edit Last Name'
+      _edit_label.innerHTML = 'Last Name'
+      _edit_btn = document.getElementById('__edit_last_name')
+      _edit_btn.style.display = 'inline'
+      const _element = document.getElementById('_last_name_value')
+      _edit_value.value = _element.innerHTML
+      M.updateTextFields()
+      _inst = M.Modal.init(modal, {
+        onCloseEnd: () => _edit_btn.style.display = 'none'
+      })
+      _inst.open()
+    })
+    document.getElementById('_address').addEventListener('dblclick', event => {
+      _edit_title.innerHTML = 'Edit Address'
+      _edit_label.innerHTML = 'Address'
+      _edit_btn = document.getElementById('__edit_address')
+      _edit_btn.style.display = 'inline'
+      const _element = document.getElementById('_address_value')
+      _edit_value.value = _element.innerHTML
+      M.updateTextFields()
+      _inst = M.Modal.init(modal, {
+        onCloseEnd: () => _edit_btn.style.display = 'none'
+      })
+      _inst.open()
+    })
+    document.getElementById('_phone').addEventListener('dblclick', event => {
+      _edit_title.innerHTML = 'Edit Phone'
+      _edit_label.innerHTML = 'Phone Number'
+      _edit_btn = document.getElementById('__edit_phone')
+      _edit_btn.style.display = 'inline'
+      const _element = document.getElementById('_phone_value')
+      _edit_value.value = _element.innerHTML
+      _edit_value.type = 'number'
+      _edit_value.maxlength = 10
+      M.updateTextFields()
+      _inst = M.Modal.init(modal, {
+        onCloseEnd: () => {
+          _edit_btn.style.display = 'none'
+          _edit_value.type = 'text'
+          _edit_value.maxlength = 120
+        }
+      })
+      _inst.open()
+    })
+
+    // updates
+    document.getElementById('__edit_first_name').addEventListener('click', event => {
+      if (_edit_value.value.length < 5) {
+        _utils.warning('First name is shorter than 5 letters')
+      } else {
+        _utils.update(`{% url 'admins-api-admin-profile' %}`, {type: 'first_name', value: _edit_value.value})
+        .then(res => {
+          if (res.status === 202) {
+            _utils.success('Successfully Updated', _utils.deload)
+            _inst.close()
+          } else {
+            _utils.error(res.error)
+          }
+        })
+      }
+    })
+    document.getElementById('__edit_last_name').addEventListener('click', event => {
+      if (_edit_value.value.length < 5) {
+        _utils.warning('Last name is shorter than 5 letters')
+      } else {
+        _utils.update(`{% url 'admins-api-admin-profile' %}`, {type: 'last_name', value: _edit_value.value})
+        .then(res => {
+          if (res.status === 202) {
+            _utils.success('Successfully Updated', _utils.deload)
+            _inst.close()
+          } else {
+            _utils.error(res.error)
+          }
+        })
+      }
+    })
+    document.getElementById('__edit_address').addEventListener('click', event => {
+      if (_edit_value.value.length < 5) {
+        _utils.warning('Address is shorter than 5 letters')
+      } else {
+        _utils.update(`{% url 'admins-api-admin-profile' %}`, {type: 'address', value: _edit_value.value})
+        .then(res => {
+          if (res.status === 202) {
+            _utils.success('Successfully Updated', _utils.deload)
+            _inst.close()
+          } else {
+            _utils.error(res.error)
+          }
+        })
+      }
+    })
+    document.getElementById('__edit_phone').addEventListener('click', event => {
+      if (_edit_value.value.length !== 10) {
+        _utils.warning('Invalid Phone number')
+      } else {
+        _utils.update(`{% url 'admins-api-admin-profile' %}`, {type: 'phone', value: _edit_value.value})
+        .then(res => {
+          if (res.status === 202) {
+            _utils.success('Successfully Updated', _utils.deload)
+            _inst.close()
+          } else {
+            _utils.error(res.error)
+          }
+        })
+      }
+    })
+
+    document.getElementById('_p_file').addEventListener('change', event => {
+      const file = event.target
+      const data = new FormData()
+      data.append("image", file.files[0])
+      _utils.postFile(`{% url 'admins-api-admin-profile' %}`, data).then(res => {
+        if (res.status === 202) {
+          _utils.success('Successfully Updated', _utils.deload)
+        } else {
+          _utils.error(res.error)
+        }
+      })
+    })
+  })
+  // special
+  function __shifts_changed() {
+    let value = ''
+
+    // {% if teach_sem.first %}
+    const _1_shift_1 = document.getElementById('1_shift_1')
+    const _1_shift_2 = document.getElementById('1_shift_2')
+    if (_1_shift_1.checked) {
+      value += '11 '
+    } else {
+      value.replace('11 ', '')
+    }
+    if (_1_shift_2.checked) {
+      value += '12 '
+    } else {
+      value.replace('12 ', '')
+    }
+    // {% endif %}
+
+    // {% if teach_sem.second %}
+    const _2_shift_1 = document.getElementById('2_shift_1')
+    const _2_shift_2 = document.getElementById('2_shift_2')
+    if (_2_shift_1.checked) {
+      value += '21 '
+    } else {
+      value.replace('21 ', '')
+    }
+    if (_2_shift_2.checked) {
+      value += '22 '
+    } else {
+      value.replace('22 ', '')
+    }
+    // {% endif %}
+
+    // {% if teach_sem.third %}
+    const _3_shift_1 = document.getElementById('3_shift_1')
+    const _3_shift_2 = document.getElementById('3_shift_2')
+    if (_3_shift_1.checked) {
+      value += '31 '
+    } else {
+      value.replace('31 ', '')
+    }
+    if (_3_shift_2.checked) {
+      value += '32 '
+    } else {
+      value.replace('32 ', '')
+    }
+    // {% endif %}
+
+    // {% if teach_sem.fourth %}
+    const _4_shift_1 = document.getElementById('4_shift_1')
+    const _4_shift_2 = document.getElementById('4_shift_2')
+    if (_4_shift_1.checked) {
+      value += '41 '
+    } else {
+      value.replace('41 ', '')
+    }
+    if (_4_shift_2.checked) {
+      value += '42 '
+    } else {
+      value.replace('42 ', '')
+    }
+    // {% endif %}
+
+    // {% if teach_sem.fifth %}
+    const _5_shift_1 = document.getElementById('5_shift_1')
+    const _5_shift_2 = document.getElementById('5_shift_2')
+    if (_5_shift_1.checked) {
+      value += '51 '
+    } else {
+      value.replace('51 ', '')
+    }
+    if (_5_shift_2.checked) {
+      value += '52 '
+    } else {
+      value.replace('52 ', '')
+    }
+    // {% endif %}
+
+    // {% if teach_sem.sixth %}
+    const _6_shift_1 = document.getElementById('6_shift_1')
+    const _6_shift_2 = document.getElementById('6_shift_2')
+    if (_6_shift_1.checked) {
+      value += '61 '
+    } else {
+      value.replace('61 ', '')
+    }
+    if (_6_shift_2.checked) {
+      value += '62 '
+    } else {
+      value.replace('62 ', '')
+    }
+    // {% endif %}
+
+    // _utils.info(value)
+    _utils.update(`{% url 'admins-api-admin-shift-teach' %}`, {value: value.trim()}).then(res => {
+      if (res.status == 202) {
+        _utils.success('Successfully Updated')
+      } else {
+        _utils.error(res.error)
+      }
+    })
+  }
+  function __years_changed() {
+    const year_1 = document.getElementById('year_1')
+    const year_2 = document.getElementById('year_2')
+    const year_3 = document.getElementById('year_3')
+    let value = ''
+    if (year_1.checked) {
+      value += '1 '
+    } else {
+      value.replace('1 ', '')
+    }
+    if (year_2.checked) {
+      value += '2 '
+    } else {
+      value.replace('2 ', '')
+    }
+    if (year_3.checked) {
+      value += '3 '
+    } else {
+      value.replace('3 ', '')
+    }
+    _utils.update(`{% url 'admins-api-admin-year-teach' %}`, {value: value.trim()}).then(res => {
+      if (res.status == 202) {
+        _utils.success('Successfully Updated')
+      } else {
+        _utils.error(res.error)
+      }
+    })
+  }
+  function __sem_changed() {
+    const sem_1 = document.getElementById('sem_1')
+    const sem_2 = document.getElementById('sem_2')
+    const sem_3 = document.getElementById('sem_3')
+    const sem_4 = document.getElementById('sem_4')
+    const sem_5 = document.getElementById('sem_5')
+    const sem_6 = document.getElementById('sem_6')
+    let value = ''
+    if (sem_1.checked) {
+      value += '1 '
+    } else {
+      value.replace('1 ', '')
+    }
+    if (sem_2.checked) {
+      value += '2 '
+    } else {
+      value.replace('2 ', '')
+    }
+    if (sem_3.checked) {
+      value += '3 '
+    } else {
+      value.replace('3 ', '')
+    }
+    if (sem_4.checked) {
+      value += '4 '
+    } else {
+      value.replace('4 ', '')
+    }
+    if (sem_5.checked) {
+      value += '5 '
+    } else {
+      value.replace('5 ', '')
+    }
+    if (sem_6.checked) {
+      value += '6 '
+    } else {
+      value.replace('6 ', '')
+    }
+    _utils.update(`{% url 'admins-api-admin-sem-teach' %}`, {value: value.trim()}).then(res => {
+      if (res.status == 202) {
+        _utils.success('Successfully Updated', _utils.deload)
+      } else {
+        _utils.error(res.error)
+      }
+    })
+  }
+</script>
+<style>
+  ._profile_image {
+    display: block;
+    margin: auto;
+    height: 200px;
+    width: 200px;
+    border-radius: 50%;
+    background-image: url('{{ user.admin_profile.image.url }}');
+    background-size: cover;
+  }
+  ._profile_image:hover::after {
+    content: 'Change Profile Image recommend: 4x4(16px/16px)';
+    background-color: rgba(0, 0, 0, .7);
+    color: #fff;
+    font-size: 1rem;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 50%;
+  }
+</style>
+{% endblock async %}

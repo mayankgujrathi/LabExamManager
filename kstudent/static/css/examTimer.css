@@ -1,0 +1,12 @@
+@font-face {
+  font-family: "Gotham";
+  src: url("../fonts/GothamMedium.ttf");
+}
+
+#timerTextCss {
+  font-family: Gotham, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  padding: 1em 0;
+}

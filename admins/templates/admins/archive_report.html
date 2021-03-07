@@ -1,0 +1,209 @@
+{% extends 'pages/baseAdmin.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="margin-bottom: 3rem;">
+  <div class="">
+    <i class="material-icons teal-text clickable" 
+    style="margin-top: 1rem;"
+    onclick="history.back()">arrow_back</i>
+    <div class="right" style="margin-top: 1rem;">
+      <i 
+      onclick="window.print()"
+      style="margin-left: .75rem;"
+      data-position="left"
+      data-tooltip="Print"
+      class="material-icons blue-text clickable tooltipped">print</i>
+      {% if is_vaild and student_reports %}
+      <i
+      style="margin-left: .75rem;"
+      data-position="right"
+      data-tooltip="Save"
+      data-target="_save_report"
+      class="material-icons blue-grey-text text-darken-1 clickable tooltipped modal-trigger">save</i>
+      {% endif %}
+    </div>
+    <span class="block center-align light">This page data is not persistent, might change for many reasons, it is recomended to take a print or to save for a persistent copy.</span>
+  </div>
+    <h4 class="center-align">Report for {{archive_name}} ({{reports_count}} students found)</h4>
+    <h6 class="center-align">For {{for_year}} Year {{for_sem}} Semester {{for_shift}} Shift</h6>
+</div>
+<div style="width: 90%; margin: 3rem auto;">
+    {% if error %}
+        <p class="center-align">{{error}}</p>
+    {% elif not student_reports %}
+        <p class="center-align">No Students Registered</p>
+    {% else %}
+      <table class="striped highlight centered responsive-table">
+        <thead>
+          <tr>
+              <th class="hide-on-extra-large-only hide-on-large-only _avatar_for_table_title">Image</th>
+              <th>PIN</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Mail</th>
+              <th>Phone</th>
+              <!-- <th>Address</th> -->
+              <th>Marks (By Attended)</th>
+              <th>Marks (By All)</th>
+              <th>Tasks Attended</th>
+              <th>Percentage (By Attended)</th>
+              <th>Percentage (By All)</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for student in student_reports %}
+          <tr>
+            <td 
+              style="background-image: url({{student.user.student_profile.image.url}}); margin: auto; border-radius: 50%;"
+              class="_avatar_for_table hide-on-extra-large-only hide-on-large-only"
+            ></td>
+            <td>{{student.user.username}}</td>
+            <td>{{student.user.first_name}}</td>
+            <td>{{student.user.last_name}}</td>
+            <td>{{student.user.email}}</td>
+            <td>
+              {% if student.user.student_profile.phone %}
+                {{student.user.student_profile.phone}}
+              {% else %}
+                not provided
+              {% endif %}
+            </td>
+            <!-- <td>
+              {% if student.user.student_profile.address %}
+                {{student.user.student_profile.address}}
+              {% else %}
+                not provided
+              {% endif %}'
+            </td> -->
+            <td>{{student.got_marks}}/{{student.student_total_marks}}</td>
+            <td>{{student.got_marks}}/{{student.total_marks_all_tasks}}</td>
+            <td>{{student.attended_tasks}}/{{student.total_num_tasks}}</td>
+            <td>{{student.got_percentage}}%</td>
+            <td>{{student.all_percentage}}%</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+</div>
+
+<!-- for print -->
+{% if error %}
+    <p class="center-align">{{error}}</p>
+{% elif not student_reports %}
+    <p class="center-align">No Students Registered</p>
+{% else %}
+<div class="section-to-print" style="visibility: hidden;">
+  <h4 class="center-align">Report for {{archive_name}} ({{reports_count}} students)</h4>
+  <h6 class="center-align">For {{for_year}} Year {{for_sem}} Semester {{for_shift}} Shift</h6>
+  <table class="centered">
+    <thead>
+      <tr>
+          <th>PIN</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Mail</th>
+          <th>Phone</th>
+          <!-- <th>Address</th> -->
+          <th>Marks (By Attended)</th>
+          <th>Marks (By All)</th>
+          <th>Tasks Attended</th>
+          <th>Percentage (By Attended)</th>
+          <th>Percentage (By All)</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for student in student_reports %}
+      <tr>
+        <td>{{student.user.username}}</td>
+        <td>{{student.user.first_name}}</td>
+        <td>{{student.user.last_name}}</td>
+        <td>{{student.user.email}}</td>
+        <td>
+          {% if student.user.student_profile.phone %}
+            {{student.user.student_profile.phone}}
+          {% else %}
+            not provided
+          {% endif %}
+        </td>
+        <!-- <td>
+          {% if student.user.student_profile.address %}
+            {{student.user.student_profile.address}}
+          {% else %}
+            not provided
+          {% endif %}
+        </td> -->
+        <td>{{student.got_marks}}/{{student.student_total_marks}}</td>
+        <td>{{student.got_marks}}/{{student.total_marks_all_tasks}}</td>
+        <td>{{student.attended_tasks}}/{{student.total_num_tasks}}</td>
+        <td>{{student.got_percentage}}%</td>
+        <td>{{student.all_percentage}}%</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+  </div>
+</div>
+
+<!-- modal -->
+<div id="_save_report" class="modal">
+  <div class="modal-content">
+    <h5 style="margin-bottom: 3rem;">Save Report</h5>
+    <div class="input-field">
+      <input type="text" id="__title_save_report">
+      <label for="__title_save_report">Title</label>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a class="modal-close btn btn-flat white waves-effect waves-yellow">Cancel</a>
+    <a id="_save_btn_action" class="btn btn-flat white waves-effect waves-green">Save</a>
+  </div>
+</div>
+{% endblock content %}
+
+{% block async %}
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    // {% if is_vaild %}
+    const _inst = M.Modal.init(document.getElementById('_save_report'))
+    document.getElementById('_save_btn_action').addEventListener('click', e => {
+      const titleObj = document.getElementById('__title_save_report')
+      if (titleObj.value.length < 5) {
+        _utils.warning('Title is shorter than 5 letters')
+      } else {
+        _utils.post(`{% url 'admins-api-save-reports' %}`,{
+            title: titleObj.value,
+            archive_name: window.location.pathname.split('/').pop().trim()
+          }).then(res => {
+            if (res.status === 200) {
+              _inst.close()
+              _utils.success('Saved')
+            } else {
+              _utils.error(res.error)
+            }
+          })
+      }
+    })
+    // {% endif %}
+  })
+</script>
+<style>
+  ._avatar_for_table {
+    min-width: 20px; 
+    min-height: 20px; 
+    max-width: 130px;
+    max-height: 130px;
+    height: 120px;
+    width: 120px;
+    margin: auto;
+    border-radius: 50%; 
+    background-position: center; 
+    background-size: cover;
+  }
+  ._avatar_for_table_title {
+    height: 120px;
+  }
+</style>
+{% endblock async %}

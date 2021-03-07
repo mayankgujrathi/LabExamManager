@@ -1,0 +1,425 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Teacher - ViewTestHistory</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="{% static 'CSS/bootstrap.css' %}" rel="stylesheet" />
+    <link href="{% static 'CSS/mycss.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'CSS/fontawesome/css/fontawesome.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'CSS/animate.min.css' %}" />
+    <title>Teacher</title>
+  </head>
+  <body>
+    {% include 'nteacher/navbar.html' %}
+
+    <div id="ViewTestHistory">
+        <h3 class="heading1 mt-md-5 mt-sm-5">Result History</h3>
+
+      {% if messages %}
+                {% for message in messages %}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                        {% ifequal message.tags 'reconductRunning error'  %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Hold on!</strong> {{message}}
+                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+                            </button>
+                        </div>
+                        {% endifequal %}
+                        {% ifequal message.tags 'notFound error'  %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Sorry!</strong> {{message}}
+                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+                            </button>
+                        </div>
+                        {% endifequal %}
+                        {% ifequal message.tags 'deleted error'  %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Deleted!</strong> {{message}}
+                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+                            </button>
+                        </div>
+                        {% endifequal %}
+                         {% ifequal message.tags 'passedout error' %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>Re-Schedule it!</strong> {{ message }} ,<br> Please Re-Schedule the time.
+                                <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endifequal %}
+                        {% ifequal message.tags 'somethingWentWrong error' %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>{{message}}</strong>,Please Go back and Check again!
+                                <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+                            </div> 
+                        {% endifequal %}
+                    {% endif %}
+                     {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                          <strong>Success!,</strong> {{ message }}
+                          <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+      {% endif %}
+
+      {% if subs %}
+      <div class="alert-success rounded p-2 mt-5">
+        <h4 class="mx-3" style="text-align:left">Average!</h4>
+      </div>
+        <div class="row mb-4 mt-5 mx-5 " style="justify-content: space-evenly;">
+        {% for s in subs %}
+        <div class="col-lg-3 col-md-6 col-sm-12" style="animation: flipInY;animation-duration: 2s;">
+          <div class="card border-secondary mb-3" style="max-width: 18rem;">
+            <div class="card-header border-secondary alert-secondary text-center">Average of {{ s }} Exams</div>
+            <div class="card-body">
+              <h4 class="card-title text-success text-center">{{ s }}</h4>
+              <p class="card-text mt-3 text-center justify-content-around">
+                <form action="." method="post" class="text-center ">
+                  {% csrf_token %}
+                  <button class="text-decoration-none text-uppercase rounded-2 border border-1 border-primary text-primary bg-transparent fw-normal my-2 col-4 p-2" name="average1" type="submit" value="{{ s }}">Shift-1</button>
+                  <button class="text-decoration-none text-uppercase rounded-2 border border-1 border-primary text-primary bg-transparent fw-normal mx-2 my-2 col-4 p-2" name="average2" type="submit" value="{{ s }}">Shift-2</button>
+                </form>
+              </p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    
+    <div class="alert-success rounded p-2 mt-5 mb-3">
+        <h4 class="mx-3" style="text-align:left">Previous Completed Tests!</h4>
+    </div>
+
+      {% if previouscompletedtests %}
+       {% for n,t in previouscompletedtests %}
+            <div class="card mb-3 border-secondary mx-5" style="animation: fadeIn;animation-duration: 2s;">
+                <p class="card-header font-weight-light px-3">Conducted on {{ t.time }}</p>
+                <div class="card-body">
+                    <h5 class="card-title">{{ n.Subject }} {{ n.ExamName }}</h5>
+                    <p class="card-text my-0">Test for Shift - {{ n.Shift }}</p>
+                    <p class="card-text">Total Questions - {{ n.TotalQuestions }}</p>
+                    <form action="." method="post">
+                      {% csrf_token %}
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" type="submit" name="check">Check Details</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-danger text-danger bg-transparent fw-bold my-2 p-2 mx-3" name="deletebtn1" type="button" value="{{ n.id }}" data-bs-toggle="modal" data-bs-target="#delete1">Delete The Test</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-primary text-primary bg-transparent fw-bold my-2 p-2 mx-3" name="reconduct" type="submit" value="{{ n.Subject }} {{ n.ExamName }}" >Re-Conduct The Test</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-secondary text-secondary bg-transparent fw-bold my-2 p-2 mx-3" name="viewQuestions" type="submit" value="{{ n.Subject }} {{ n.ExamName }}">View Questions</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" name="reschedule" type="button" value="{{ n.id }}" data-bs-toggle="modal" data-bs-target="#datetime1">Re-Schedule The Time</button>   
+                      <input type="hidden" value="{{ n.id }}" name="id"/>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+      {% else %}
+        <h5>Oops!,There's No Latest Tests Conducted. Move On and Conduct Tests Now!</h5>
+      {% endif %}
+
+      
+
+    <div class="alert-success rounded p-2 mt-5">
+        <h4 class="mx-3" style="text-align:left">Results According to Semesters!</h4>
+    </div>
+
+    <div id="accordion" class="mx-5">  
+      <div class="card my-3" style="animation:fadeInLeftBig;animation-duration:1s">
+        <div class="card-header collapsed card-link btn mybtn-secondary" id="headingOne" data-toggle="collapse" data-target="#collapseOne">
+          <h5 class="mb-0">
+            Semester - I
+            <i class="fas fa-chevron-circle-down homeicons mx-3"></i>
+          </h5>
+        </div>
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+          <div class="card-body">
+          {% if sem1 %}
+            {% for n,t in sem1 %}
+            <div class="card mb-3 border-secondary mx-5" style="animation: fadeIn;animation-duration: 2s;">
+                <p class="card-header font-weight-light px-3">Conducted on {{ t.time }}</p>
+                <div class="card-body">
+                    <h5 class="card-title">{{ n.Subject }} {{ n.ExamName }}</h5>
+                    <p class="card-text my-0">Test for Shift - {{ n.Shift }}</p>
+                    <p class="card-text">Total Questions - {{ n.TotalQuestions }}</p>
+                    <form action="." method="post">
+                      {% csrf_token %}
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" type="submit" name="check">Check Details</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-danger text-danger bg-transparent fw-bold my-2 p-2 mx-3" name="deletebtn1" type="button" value="{{ n.id }}" data-bs-toggle="modal" data-bs-target="#delete1">Delete The Test</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-primary text-primary bg-transparent fw-bold my-2 p-2 mx-3" name="reconduct" type="submit" value="{{ n.Subject }} {{ n.ExamName }}" >Re-Conduct The Test</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-secondary text-secondary bg-transparent fw-bold my-2 p-2 mx-3" name="viewQuestions" type="submit" value="{{ qu.Subject }} {{ qu.ExamName }}">View Questions</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" name="reschedule" type="button" value="{{ n.id }}" data-bs-toggle="modal" data-bs-target="#datetime1">Re-Schedule The Time</button>
+                      <input type="hidden" value="{{ n.id }}" name="id"/>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+          {% else %}
+              <h5>No Tests under Semester - 1</h5>
+          {% endif %} 
+          </div>
+        </div>
+      </div>
+
+      <div class="card my-3" style="animation:fadeInRightBig;animation-duration:1s">
+        <div class="card-header collapsed card-link btn mybtn-secondary" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo">
+          <h5 class="mb-0">
+            Semester - II <i class="fas fa-chevron-circle-down homeicons mx-3"></i>
+          </h5>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+          <div class="card-body">
+          {% if sem2 %}
+            {% for n,t in sem2 %}
+            <div class="card mb-3 border-secondary mx-5" style="animation: fadeIn;animation-duration: 2s;">
+                <p class="card-header font-weight-light px-3">Conducted on {{ t.time }}</p>
+                <div class="card-body">
+                    <h5 class="card-title">{{ n.Subject }} {{ n.ExamName }}</h5>
+                    <p class="card-text my-0">Test for Shift - {{ n.Shift }}</p>
+                    <p class="card-text">Total Questions - {{ n.TotalQuestions }}</p>
+                    <form action="." method="post">
+                      {% csrf_token %}
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" type="submit" name="check">Check Details</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-danger text-danger bg-transparent fw-bold my-2 p-2 mx-3" name="deletebtn1" type="button" value="{{ n.id }}" data-bs-toggle="modal" data-bs-target="#delete1">Delete The Test</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-primary text-primary bg-transparent fw-bold my-2 p-2 mx-3" name="reconduct" type="submit" value="{{ n.Subject }} {{ n.ExamName }}" >Re-Conduct The Test</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-secondary text-secondary bg-transparent fw-bold my-2 p-2 mx-3" name="viewQuestions" type="submit" value="{{ qu.Subject }} {{ qu.ExamName }}">View Questions</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" name="reschedule" type="button" value="{{ n.id }}" data-bs-toggle="modal" data-bs-target="#datetime1">Re-Schedule The Time</button>
+                      <input type="hidden" value="{{ n.id }}" name="id"/>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+          {% else %}
+              <h5>No Tests under Semester - 2</h5>
+          {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="card my-3 " style="animation:fadeInLeftBig;animation-duration:1s">
+        <div class="card-header collapsed card-link btn mybtn-secondary" id="headingThree" data-toggle="collapse" data-target="#collapseThree">
+          <h5>Semester - III<i class="fas fa-chevron-circle-down homeicons mx-3"></i></h5>
+        </div>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+          <div class="card-body">
+          {% if sem3 %}
+            {% for n,t in sem3 %}
+            <div class="card mb-3 border-secondary mx-5" style="animation: fadeIn;animation-duration: 2s;">
+                <p class="card-header font-weight-light px-3">Conducted on {{ t.time }}</p>
+                <div class="card-body">
+                    <h5 class="card-title">{{ n.Subject }} {{ n.ExamName }}</h5>
+                    <p class="card-text my-0">Test for Shift - {{ n.Shift }}</p>
+                    <p class="card-text">Total Questions - {{ n.TotalQuestions }}</p>
+                    <form action="." method="post">
+                      {% csrf_token %}
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" type="submit" name="check">Check Details</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-danger text-danger bg-transparent fw-bold my-2 p-2 mx-3" name="deletebtn1" type="button" value="{{ n.id }}" data-bs-toggle="modal" data-bs-target="#delete1">Delete The Test</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-primary text-primary bg-transparent fw-bold my-2 p-2 mx-3" name="reconduct" type="submit" value="{{ n.Subject }} {{ n.ExamName }}" >Re-Conduct The Test</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-secondary text-secondary bg-transparent fw-bold my-2 p-2 mx-3" name="viewQuestions" type="submit" value="{{ qu.Subject }} {{ qu.ExamName }}">View Questions</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" name="reschedule" type="button" value="{{ n.id }}" data-bs-toggle="modal" data-bs-target="#datetime1">Re-Schedule The Time</button>
+                      <input type="hidden" value="{{ n.id }}" name="id"/>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+          {% else %}
+              <h5>No Tests under Semester - 3</h5>
+          {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="card my-3" style="animation:fadeInRightBig;animation-duration:1s">
+        <div class="card-header collapsed card-link btn mybtn-secondary" id="headingFour" data-toggle="collapse" data-target="#collapseFour">
+          <h5 class="mb-0">
+            Semester - IV
+            <i class="fas fa-chevron-circle-down homeicons mx-3"></i>
+          </h5>
+        </div>
+
+        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+          <div class="card-body">
+          {% if sem4 %}
+            {% for n,t in sem4 %}
+            <div class="card mb-3 border-secondary mx-5" style="animation: fadeIn;animation-duration: 2s;">
+                <p class="card-header font-weight-light px-3">Conducted on {{ t.time }}</p>
+                <div class="card-body">
+                    <h5 class="card-title">{{ n.Subject }} {{ n.ExamName }}</h5>
+                    <p class="card-text my-0">Test for Shift - {{ n.Shift }}</p>
+                    <p class="card-text">Total Questions - {{ n.TotalQuestions }}</p>
+                    <form action="." method="post">
+                      {% csrf_token %}
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" type="submit" name="check">Check Details</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-danger text-danger bg-transparent fw-bold my-2 p-2 mx-3" name="deletebtn1" type="button" value="{{ n.id }}" data-bs-toggle="modal" data-bs-target="#delete1">Delete The Test</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-primary text-primary bg-transparent fw-bold my-2 p-2 mx-3" name="reconduct" type="submit" value="{{ n.Subject }} {{ n.ExamName }}" >Re-Conduct The Test</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-secondary text-secondary bg-transparent fw-bold my-2 p-2 mx-3" name="viewQuestions" type="submit" value="{{ qu.Subject }} {{ qu.ExamName }}">View Questions</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" name="reschedule" type="button" value="{{ n.id }}" data-bs-toggle="modal" data-bs-target="#datetime1">Re-Schedule The Time</button>
+                      <input type="hidden" value="{{ n.id }}" name="id"/>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+          {% else %}
+              <h5>No Tests under Semester - 4</h5>
+          {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="card my-3" style="animation:fadeInLeftBig;animation-duration:1s">
+        <div class="card-header collapsed card-link btn mybtn-secondary" id="headingFive" data-toggle="collapse" data-target="#collapseFive">
+          <h5 class="mb-0">
+            Semester - V
+            <i class="fas fa-chevron-circle-down homeicons mx-3"></i>
+          </h5>
+        </div>
+
+        <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordion">
+          <div class="card-body">
+          {% if sem5 %}
+            {% for n,t in sem5 %}
+            <div class="card mb-3 border-secondary mx-5" style="animation: fadeIn;animation-duration: 2s;">
+                <p class="card-header font-weight-light px-3">Conducted on {{ t.time }}</p>
+                <div class="card-body">
+                    <h5 class="card-title">{{ n.Subject }} {{ n.ExamName }}</h5>
+                    <p class="card-text my-0">Test for Shift - {{ n.Shift }}</p>
+                    <p class="card-text">Total Questions - {{ n.TotalQuestions }}</p>
+                    <form action="." method="post">
+                      {% csrf_token %}
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" type="submit" name="check">Check Details</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-danger text-danger bg-transparent fw-bold my-2 p-2 mx-3" name="deletebtn1" type="button" value="{{ n.id }}" data-bs-toggle="modal" data-bs-target="#delete1">Delete The Test</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-primary text-primary bg-transparent fw-bold my-2 p-2 mx-3" name="reconduct" type="submit" value="{{ n.Subject }} {{ n.ExamName }}" >Re-Conduct The Test</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-secondary text-secondary  bg-transparent fw-bold my-2 p-2 mx-3" name="viewQuestions" type="submit" value="{{ qu.Subject }} {{ qu.ExamName }}">View Questions</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" name="reschedule" type="button" value="{{ n.id }}" data-bs-toggle="modal" data-bs-target="#datetime1">Re-Schedule The Time</button>
+                      <input type="hidden" value="{{ n.id }}" name="id"/>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+              <h5>No Tests under Semester - 5</h5>
+          {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="card my-3" style="animation:fadeInRightBig;animation-duration:1s">
+        <div class="card-header collapsed card-link btn mybtn-secondary" id="headingSix" data-toggle="collapse" data-target="#collapseSix">
+          <h5 class="mb-0">
+            Semester - VI
+            <i class="fas fa-chevron-circle-down homeicons mx-3"></i>
+          </h5>
+        </div>
+        <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordion">
+          <div class="card-body">
+          {% if sem6 %}
+            {% for n,t in sem6 %}
+            <div class="card mb-3 border-secondary mx-5" style="animation: fadeIn;animation-duration: 2s;">
+                <p class="card-header font-weight-light px-3">Conducted on {{ t.time }}</p>
+                <div class="card-body">
+                    <h5 class="card-title">{{ n.Subject }} {{ n.ExamName }}</h5>
+                    <p class="card-text my-0">Test for Shift - {{ n.Shift }}</p>
+                    <p class="card-text">Total Questions - {{ n.TotalQuestions }}</p>
+                    <form action="." method="post">
+                      {% csrf_token %}
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" type="submit" name="check" >Check Details</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-danger text-danger bg-transparent fw-bold my-2 p-2 mx-3" name="deletebtn1" type="button" value="{{ n.id }}" data-bs-toggle="modal" data-bs-target="#delete1">Delete The Test</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-primary text-primary bg-transparent fw-bold my-2 p-2 mx-3" name="reconduct" type="submit" value="{{ n.Subject }} {{ n.ExamName }}" >Re-Conduct The Test</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-secondary text-secondary bg-transparent fw-bold my-2 p-2 mx-3" name="viewQuestions" type="submit" value="{{ qu.Subject }} {{ qu.ExamName }}">View Questions</button>
+                      <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" name="reschedule" type="button" value="{{ n.id }}" data-bs-toggle="modal" data-bs-target="#datetime1">Re-Schedule The Time</button>
+                      <input type="hidden" value="{{ n.id }}" name="id"/>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+          {% else %}
+              <h5>No Tests under Semester - 6</h5>
+          {% endif %}
+          </div>
+        </div>
+      </div>
+      
+    </div>
+       <!-- Modal -->
+          <div class="modal fade" id="datetime1" tabindex="-1" aria-labelledby="datetime1Label" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="datetime1Label">ENTER DATE AND TIME FOR EXAM</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form" name="Form" method="post" action=".">
+                    {% csrf_token %}
+                  <div class="modal-body px-5">
+                      <p class="fw-light mt-4">Select Date and Time</p>
+                      <div class="form-floating">
+                        <input type="datetime-local" class="form-control" id="dateTime1" placeholder="Select Date and Time" name="dateTime1" required/>
+                        <label for="batch"><i>Date and Time of Exam</i></label>
+                      </div>
+                  </div>      
+                  <div class="modal-footer">
+                    <button type="submit" id="datetime1submit" name="ok" class="text-success border-0 fs-5 text-decoration-none mx-3" >OK</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+           <!--delete Modal -->
+          <div class="modal fade" id="delete1" tabindex="-1" aria-labelledby="delete1Label" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="delete1Label">DELETE THE TEST?</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form" name="Form" method="post" action=".">
+                    {% csrf_token %}
+                  <div class="modal-body px-5">
+                      <p class="fw-bold mt-2">ARE YOU SURE WANT TO DELETE THE TEST PREMANENTLY?</p>
+                  </div>      
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-success mx-3" data-bs-dismiss="modal">NO</button>
+                    <button type="submit" id="delete1submit" name="delete" class="btn btn-danger mx-3" >YES</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+    </div>
+
+    <script>window.$ = window.jQuery = require('jquery');</script>
+    <script src="{% static 'JS/jquery.min.js' %}" ></script>
+    <script src="{% static 'CSS/fontawesome/js/all.min.js' %}" ></script>
+    <script src="{% static 'JS/popper.min.js' %}"></script>
+    <script src="{% static 'JS/bootstrap.bundle.js' %}" ></script>
+    <script src="{% static 'JS/bootstrap1.min.js' %}" ></script>
+    <script src="{% static 'JS/myjs.js' %}" ></script>
+    <script>
+    !function(){
+        document.addEventListener('DOMContentLoaded',function(){
+          let id = undefined;
+          let idDelete = undefined;
+          document.getElementsByName('reschedule').forEach(item => item.addEventListener('click',function(){
+              id = item.value
+          }))
+          document.getElementById('datetime1submit').addEventListener('click',function(){
+            let datetime =  document.forms['Form']['dateTime1'].value
+            document.getElementById('datetime1submit').setAttribute('value',id)
+            if(datetime && id){
+              document.getElementById('datetime1submit').setAttribute('data-bs-dismiss','modal')
+            }
+          })
+
+          document.getElementsByName('deletebtn1').forEach(item => item.addEventListener('click',function(){
+            idDelete = item.value
+          }))
+          document.getElementById('delete1submit').addEventListener('click',function(){
+            document.getElementById('delete1submit').setAttribute('value',idDelete)
+            if(idDelete){
+              document.getElementById('delete1submit').setAttribute('data-bs-dismiss','modal')
+            }
+          })
+        })
+    }()
+    </script>
+  </body>
+</html>

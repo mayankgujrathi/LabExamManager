@@ -1,0 +1,110 @@
+{% extends 'pages/baseAdmin.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+  <h5 class="center-align">Archive Overview</h5>
+  <ul class="collapsible popout">
+    {% for archive in all_archives %}
+    <li>
+      <div class="responsive-text collapsible-header">{{archive.title}}</div>
+      <div class="collapsible-body">
+        <ul class="collapsible popout">
+          {% if archive.tasks %}
+          {% for task in archive.tasks %}
+          <li>
+            <div class="collapsible-header responsive-text">{{task.title}}</div>
+            <div class="collapsible-body">
+              <p class="responsive-text">{{task.description}}</p>
+              <br/>
+              <button
+                id="{{task.id}}"
+                archive="{{archive.title}}"
+                data-position="top"
+                data-tooltip="Manage Task"
+                onclick="_utils.mov(`{% url 'admins-task-archives' %}{{ archive.title }}`)"
+                class="clickable tooltipped btn btn-flat blue-text waves-effect waves-blue white _view_btn"
+              >
+              View
+              </button>
+            </div>
+          </li>   
+          {% endfor %}
+          {% else %}
+            <p class="center-align">No Task Found</p>
+          {% endif %}
+        </ul>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <h5 class="center-align">Active Tasks</h5>
+  <ul class="collapsible popout">
+    {% for archive in active_archives %}
+    <li>
+      <div class="responsive-text collapsible-header ">{{archive.title}}</div>
+      <div class="collapsible-body">
+        <ul class="collapsible popout">
+          {% if archive.tasks %}
+          {% for task in archive.tasks %}
+          <li>
+            <div class="collapsible-header responsive-text">{{task.title}}</div>
+            <div class="collapsible-body">
+              <p class="responsive-text">{{task.description}}</p>
+              <br/>
+              <button
+                id="{{task.id}}"
+                archive="{{archive.title}}"
+                data-position="top"
+                data-tooltip="Stop Task Session"
+                class="clickable tooltipped btn btn-flat red-text waves-effect waves-red white _stop_btn"
+              >
+              Stop
+              </button>
+              <button
+                id="{{task.id}}"
+                archive="{{archive.title}}"
+                data-position="top"
+                data-tooltip="Manage Task"
+                onclick="_utils.mov(`{% url 'admins-task-archives' %}{{ archive.title }}`)"
+                class="clickable tooltipped btn btn-flat blue-text waves-effect waves-blue white _view_btn"
+              >
+              View
+              </button>
+            </div>
+          </li>   
+          {% endfor %}
+          {% else %}
+            <p class="center-align">No Active Task Found</p>
+          {% endif %}
+        </ul>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</div> 
+{% endblock content %}
+
+{% block async %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('._stop_btn').forEach(item => item
+    .addEventListener('click', event => {
+      const _archive = event.target.getAttribute("archive")
+      const _task_id = event.target.id
+      _utils.update(`{% url 'admins-api-task-curd' %}`, {
+        task_id: _task_id,
+        toggle_active: true,
+        archive: _archive
+      }).then(res => {
+        if (res.status === 202) {
+          _utils.success(`Successfully ${event.target.innerHTML}ed`, () => _utils.deload(0))
+        } else {
+          _utils.error(res.error)
+        }
+      })
+    }))
+  })
+</script>
+{% endblock async %}

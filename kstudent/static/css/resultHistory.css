@@ -1,0 +1,38 @@
+@font-face {
+  font-family: "Raleway";
+  src: url("../fonts/Raleway-Regular.ttf");
+}
+
+body {
+    padding: 0 5%;
+}
+
+body::-webkit-scrollbar {
+    width: 0.5rem;
+  }
+  body::-webkit-scrollbar-thumb {
+    background-color: rgb(0, 150, 136);
+    border-radius: 0.2rem;
+  }
+  body::-webkit-scrollbar-track {
+    background-color: rgba(0, 150, 136, 0.4);
+  }
+
+.customClassNoResults {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  animation: slide_animation_bottom;
+  animation-duration: 1700ms;
+  font-family: "Raleway";
+}
+
+@keyframes slide_animation_bottom {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translate(0%);
+  }
+}

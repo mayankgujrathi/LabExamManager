@@ -1,0 +1,50 @@
+{% extends 'pages/baseStudents.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="collection">
+        <div class="collapsible-header">Completed Tasks</div>
+        {% if teachers %}
+        {% for teach in teachers %}
+            <div class="collection-item avatar">
+                <div class="__avatar circle responsive-text" style="background-image: url({{teach.admin_profile.image.url}});"></div>
+                <i onclick="_utils.mov(`{% url 'students-completed-tasks' %}{{teach.id}}`)"
+                class="clickable __next_btn material-icons secondary-content"
+                >navigate_next</i>
+                <p class="responsive-text" id="{{teach.username}}">
+                    {%if not teach.first_name or not teach_last_name %}
+                        ({{teach.username}})
+                    {% endif %}
+                    {{teach.first_name}} {{teach.last_name}}
+                  <br />
+                  <span>You Can contact me via</span>
+                  <br>
+                  {% if teach.admin_profile.phone %}
+                  <span class="responsive-text"><b>Phone</b> {{teach.admin_profile.phone}}</span>
+                  <br/>
+                  {% endif %}
+                  {% if teach.email %}
+                  <span class="responsive-text"><b>Mail</b> {{teach.email}}</span>
+                  {% endif %}
+                </p>
+            </div>
+        {% endfor %}
+        {% else %}
+        <div class="collection-item">
+            <p class="center-align">no instructor found</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block async %}
+<style>
+    .__avatar {
+        height: 40px;
+        width: 40px;
+        background-size: cover;
+    }
+</style>
+{% endblock async %}

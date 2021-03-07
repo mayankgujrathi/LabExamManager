@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="{% static 'CSS/bootstrap.css' %}" rel="stylesheet" />
+    <link href="{% static 'CSS/mycss.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'CSS/fontawesome/css/fontawesome.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'CSS/animate.min.css' %}" />
+    <title>Teacher</title>
+  </head>
+  <body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-sm-start fixed-top">
+      <div class="container-fluid">
+        <p class="bg-light mx-4 mb-0 mybackarrow" onclick="window.history.go(-1); return false;"><i class="fas fa-arrow-left" style="color:#fff;font-size:30px;"></i></p>
+        <a class="navbar-brand order-1 order-lg-0 ml-lg-0 mx-2 mr-auto">College Tests</a>
+        <button class="navbar-toggler align-self-start" type="button">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse bg-light d-flex flex-column flex-lg-row flex-xl-row justify-content-lg-end mobileMenu p-4 p-lg-0 mt-5 mt-5 mt-lg-0" id="navbarNav">
+          <ul class="navbar-nav align-self-stretch pl-5">
+            <li class="nav-item clickable">
+              <a class="nav-link active" aria-current="page" onclick="location.href='{% url 'Home' %}'">
+                <i class="fas fa-home icon"></i>Home</a>
+            </li>
+            <li class="nav-item clickable">
+              <a class="nav-link " aria-current="page" onclick="location.href='{% url 'PrepareTest' %}'">
+                <i class="fas fa-book icon" aria-hidden="true"></i>Prepare Test</a>
+            </li>
+            <li class="nav-item clickable">
+              <a class="nav-link" onclick="location.href='{% url 'Viewtesthistory' %}'">
+                <i class="fas fa-file-pdf icon"></i>View Test Results</a>
+            </li>
+            <li class="nav-item clickable">
+              <a class="nav-link" onclick="location.href='{% url 'admins-home' %}'">
+                <i class="fas fa-sign-out-alt icon" aria-hidden="true"></i>
+                Exit 
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+        <div id="ShowResult" style="padding:1% 2% 1% 2%">
+        <div class="container-fluid mt-5 mb-4 px-5" id="innerShowResult">
+            <button type="button" class="btn btn-outline-dark mt-4" id="print">Print the Table</button>
+            <h3 class="text-center mb-2 heading1">{{ subject }} {{ exam }}</h3>
+        </div>
+        <div class="table-responsive px-5">
+            {% if results %}
+            <table class="table table-bordered table-hover w-100" style="animation:backInDown; animation-duration:0.7s;">
+                <thead>
+                    <tr class="table-success text-center">
+                    <th scope="col">Rank</th>
+                    <th scope="col">Pin</th>
+                    <th scope="col">Max Marks 20</th>
+                    <th scope="col">Duration in Min</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for s in results %}
+                    <tr class="text-center">
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{s.Pin}}</td>
+                    <td>{{ s.Marks }}</td>
+                    <td>{{ s.Time_Taken }} min</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% elif final %}
+                <table class="table table-bordered table-hover w-100" style="animation:backInDown; animation-duration:0.7s;">
+                <thead>
+                    <tr class="table-success text-center">
+                    <th scope="col">S.No</th>
+                    <th scope="col">Pin</th>
+                    <th scope="col">Average</th>
+                    <th scope="col">Exams Attempted out of {{ totalExams }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for key,values in final.items %}
+                    <tr class="text-center">
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{key}}</td>
+                    <td>{{ values.avg }}</td>
+                    <td>{{ values.exams_attempted }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <h4 class="text-center text-capitalize mt-4">No results found!, It looks like no student attempted the exam.</h4>
+            {% endif %}
+        </div>
+        </div>
+
+
+ <script>window.$ = window.jQuery = require('jquery');</script>
+    <script src="{% static 'JS/jquery.min.js' %}"></script>
+    <script src="{% static 'CSS/fontawesome/js/all.min.js' %}" ></script>
+    <script src="{% static 'JS/popper.min.js' %}" ></script>
+    <script src="{% static 'JS/bootstrap.bundle.js' %}" ></script>
+    <script src="{% static 'JS/bootstrap1.min.js' %}"></script>
+    <script src="{% static 'JS/myjs.js' %}" ></script>
+    <script>
+        !function(){
+            document.addEventListener('DOMContentLoaded',function(){
+                document.getElementById('print').addEventListener('click',function(){
+                    document.getElementById("innerShowResult").classList.remove("mt-5")
+                    window.print()
+                    document.getElementById("innerShowResult").classList.add("mt-5")
+                });
+            });
+        }();
+</script>
+  </body>
+</html>

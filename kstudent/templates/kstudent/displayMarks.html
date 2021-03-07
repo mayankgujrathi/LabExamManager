@@ -1,0 +1,257 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/displayMarks.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbarCSS.css' %}">
+    <title>Marks</title>
+</head>
+
+<body>
+    
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-sm-start fixed-top">
+        <div class="container-fluid">
+                <a class="navbar-brand order-1 order-lg-0 ml-lg-0 ml-2 mr-auto" onclick="location.href='/kstudent';" style="display: inline-block; font-size: 20px;">College Tests</a>
+            <button class="navbar-toggler align-self-start" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse bg-light d-flex flex-column flex-lg-row flex-xl-row justify-content-lg-end mobileMenu p-4 p-lg-0 mt-5 mt-5 mt-lg-0"
+                id="navbarNav">
+                <ul class="navbar-nav align-self-stretch pl-5">
+                    <li class="nav-item">
+                        <a class="nav-link active" onclick="location.href='/kstudent'">
+                            <i class="fas fa-home"></i>
+                            Home</a>
+                    </li>
+                    <div class="static-dividers left"></div>
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="location.href='/kstudent/history?semester=all'">
+                            <i class="fas fa-history icon"></i>
+                            Result History</a>
+                    </li>
+                    <div class="static-dividers left"></div>
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="location.href='{% url 'admins-home' %}'">
+                            <i class="fas fa-sign-out-alt icon" aria-hidden="true"></i>
+                            Exit
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-display-marks">
+        <div class="row">
+            <div class="col text-center">
+                <div id="fluid-meter" class="mx-auto"></div>
+            </div>
+        </div>
+    </div>
+    <div class="intimate-about-answers">
+        <h3>Stay tuned! Answers will be out in</h3>
+        <div id="timerTextCss">
+            <span id="time" style="font-size: 2em;">--:--</span>
+        </div>
+    </div>
+    <div style="text-align: center; margin-bottom: 2em;">
+        <button class="btn btn-primary" id="showAnswerOnClick" disabled>Display Answers</button>
+    </div>
+    <div class="display-marks-answer">
+    {% comment %}{% if details.displayAnswers %}{% endcomment %}
+        <!-- <p id="heading">Answers</p>
+        <hr /> -->
+        <div class="answer-content" style="display: none;" id="displayAnswersCard">
+
+        {% for correct_objects, written_answers in zip_list %}
+            
+        {% if correct_objects.Question_Type|lower == "mcq" %}
+        <div class="card" style="margin-top: 3em;">
+            <div class="card-header" style="padding-bottom: 0 !important; font-weight: normal !important;">
+                    <span style="display: inline-block; font-size: 1.2em;">{{forloop.counter}}.&nbsp;</span>
+                    <p style="display: inline-block; font-size: 1.2em;">{{ correct_objects.Question }}</p>
+            </div>
+
+            <div class="optiondiv">
+                <div class="optioninnerdiv">
+                    <div class="input-group my-input-group p-1 w-75">
+                        <div class="input-group-text my-input-group1">
+                            <input type="radio" class="form-check-input" name="{{ correct_objects.id }}" id="flexRadioDefault1_{{ correct_objects.id }}" value="1" {% if "1" == correct_objects.Answer %}checked{% else %}disabled{% endif %}>
+                        </div>
+                        {% if "1" == written_answers and written_answers != correct_objects.Answer %}
+                            <label class="form-check-label" for="flexRadioDefault1_{{ correct_objects.id }}" style="color: #c71717;">
+                                {{ correct_objects.Option_1 }}
+                            </label>
+                            <i class="fas fa-times-circle" style="color: #c71717; font-size: 0.9em; margin-left: 0.3em; align-self: center;"></i>
+                        {% elif "1" == correct_objects.Answer %}
+                            <label class="form-check-label" for="flexRadioDefault1_{{ correct_objects.id }}" style="color: #0a6e28;">
+                                {{ correct_objects.Option_1 }}
+                            </label>
+                            <i class="fas fa-check-circle" style="color: #0a6e28; font-size: 0.9em; margin-left: 0.3em; align-self: center;"></i>
+                        {% else %}
+                            <label class="form-check-label" for="flexRadioDefault1_{{ correct_objects.id }}">
+                                {{ correct_objects.Option_1 }}
+                            </label>
+                        {% endif %}
+                    </div>
+                    <div class="input-group my-input-group p-1 w-75">
+                        <div class="input-group-text my-input-group1">
+                            <input type="radio" class="form-check-input" name="{{ correct_objects.id }}" id="flexRadioDefault2_{{ correct_objects.id }}" value="2" {% if "2" == correct_objects.Answer %}checked{% else %}disabled{% endif %}>
+                        </div>
+                        {% if "2" == written_answers and written_answers != correct_objects.Answer %}
+                            <label class="form-check-label" for="flexRadioDefault2_{{ correct_objects.id }}" style="color: #c71717;">
+                                {{ correct_objects.Option_2 }}
+                            </label>
+                            <i class="fas fa-times-circle" style="color: #c71717; font-size: 0.9em; margin-left: 0.3em; align-self: center;"></i>
+                        {% elif "2" == correct_objects.Answer %}
+                            <label class="form-check-label" for="flexRadioDefault2_{{ correct_objects.id }}" style="color: #0a6e28;">
+                                {{ correct_objects.Option_2 }}
+                            </label>
+                            <i class="fas fa-check-circle" style="color: #0a6e28; font-size: 0.9em; margin-left: 0.3em; align-self: center;"></i>
+                        {% else %}
+                            <label class="form-check-label" for="flexRadioDefault2_{{ correct_objects.id }}">
+                                {{ correct_objects.Option_2 }}
+                            </label>
+                        {% endif %}
+                    </div>
+        
+                    <div class="input-group my-input-group p-1 w-75">
+                        <div class="input-group-text my-input-group1">
+                            <input type="radio" class="form-check-input" name="{{ correct_objects.id }}" id="flexRadioDefault3_{{ correct_objects.id }}" value="3" {% if "3" == correct_objects.Answer %}checked{% else %}disabled{% endif %}>
+                        </div>
+                        {% if "3" == written_answers and written_answers != correct_objects.Answer %}
+                            <label class="form-check-label" for="flexRadioDefault3_{{ correct_objects.id }}" style="color: #c71717;">
+                                {{ correct_objects.Option_3 }}
+                            </label>
+                            <i class="fas fa-times-circle" style="color: #c71717; font-size: 0.9em; margin-left: 0.3em; align-self: center;"></i>
+                        {% elif "3" == correct_objects.Answer %}
+                            <label class="form-check-label" for="flexRadioDefault3_{{ correct_objects.id }}" style="color: #0a6e28;">
+                                {{ correct_objects.Option_3 }}
+                            </label>
+                            <i class="fas fa-check-circle" style="color: #0a6e28; font-size: 0.9em; margin-left: 0.3em; align-self: center;"></i>
+                        {% else %}
+                            <label class="form-check-label" for="flexRadioDefault3_{{ correct_objects.id }}">
+                                {{ correct_objects.Option_3 }}
+                            </label>
+                        {% endif %}
+                    </div>
+        
+                    <div class="input-group my-input-group p-1 w-75">
+                        <div class="input-group-text my-input-group1">
+                            <input type="radio" class="form-check-input" name="{{ correct_objects.id }}" id="flexRadioDefault4_{{ correct_objects.id }}" value="4" {% if "4" == correct_objects.Answer %}checked{% else %}disabled{% endif %}>
+                        </div>
+                        {% if "4" == written_answers and written_answers != correct_objects.Answer %}
+                            <label class="form-check-label" for="flexRadioDefault4_{{ correct_objects.id }}" style="color: #c71717;">
+                                {{ correct_objects.Option_4 }}
+                            </label>
+                            <i class="fas fa-times-circle" style="color: #c71717; font-size: 0.9em; margin-left: 0.3em; align-self: center;"></i>
+                        {% elif "4" == correct_objects.Answer %}
+                            <label class="form-check-label" for="flexRadioDefault4_{{ correct_objects.id }}" style="color: #0a6e28;">
+                                {{ correct_objects.Option_4 }}
+                            </label>
+                            <i class="fas fa-check-circle" style="color: #0a6e28; font-size: 0.9em; margin-left: 0.3em; align-self: center;"></i>
+                        {% else %}
+                            <label class="form-check-label" for="flexRadioDefault4_{{ correct_objects.id }}">
+                                {{ correct_objects.Option_4 }}
+                            </label>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% elif correct_objects.Question_Type|lower == "fib" %}
+            <span class="qn-dM" style="font-size: 1.2em; margin-left: 0.9em;">{{ forloop.counter }}.&ensp;{{ correct_objects.Question }}</span>
+        &ensp;
+            {% if written_answers|lower == correct_objects.Answer|lower %}
+                <div style="display: inline-block;" onmousedown="deselectSelection(event)">
+                    <input type="text" class="form-control" id="inputText_{{ correct_objects.id }}"
+                        style="width: 11em; height: 2em; display: inline-block; font-size: 14px; border-color: #0a6e28; box-shadow: 0 0 0 0.3rem rgba(40, 167, 69, 0.25);" name="{{ correct_objects.id }}" autocomplete="off" value="{{ written_answers }}" disabled>
+                </div>
+                <i class="fas fa-check-circle" style="color: #0a6e28; font-size: 0.9em; margin-left: 0.3em; align-self: center;"></i>
+                <span style="display: block;"></span>
+
+            {% elif written_answers|lower != correct_objects.Answer|lower %}
+
+            <div style="display: inline-block;" onmousedown="deselectSelection(event)">
+                <input type="text" class="form-control" id="inputText_{{ correct_objects.id }}"
+                    style="width: 11em; height: 2em; display: inline-block; font-size: 14px; border-color: #c71717; box-shadow: 0 0 0 0.3rem rgba(199, 23, 23, 0.25);" name="{{ correct_objects.id }}" autocomplete="off" value="{% if written_answers != None %} {{written_answers}} {% endif %}" disabled>
+            </div>
+            <i class="fas fa-times-circle" style="color: #c71717; font-size: 0.9em; margin-left: 0.3em; align-self: center;"></i>
+            <span style="display: block;"></span>
+            <p class="AnswerTxtAndAnswer" style="margin-left: 1em; margin-top: 1em;"><span class="AnswerTxt" style="font-weight: bold; color: #0a6e28; margin-right: 0.6em;">Answer :</span>{{ correct_objects.Answer }}</p>
+            {% endif %}
+
+        {% endif %}
+
+            {% if written_answers == None %}
+                <p style="color: #999;" ><i>(Unattempted)</i></p>
+            {% endif %}
+
+            {% endfor %}
+    
+        </div>
+    {% comment %}{% else %}{% endcomment %}
+    {% comment %}{% endif %}{% endcomment %}
+    </div>
+
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.js' %}"></script>
+    <script src="{% static 'js/all.min.js' %}"></script>
+    <script src="{% static 'js/navbarJS.js' %}"></script>
+    <script src="{% static 'js/answerDisplayTimer.js' %}"></script>
+    <script src="{% static 'js/js-fluid-meter.js' %}"></script>
+
+    <script>	
+    window.onload = () => {
+        sessionStorage.setItem("shallLoad", 1)
+        displayMarksFunc({{ details.attained_marks }},{{ details.total_marks }});
+        triggerRemainingAnswerTimeCountdownFunc();
+    };
+        function deselectSelection(event) {
+            event.preventDefault();
+        }
+        function displayMarksFunc(attained_marks, total_marks) {
+            let fm = new FluidMeter();
+            fm.init({
+                targetContainer: document.getElementById("fluid-meter"),
+                // Enter fill percentage here
+                totalMarks: total_marks,
+                fillPercentage: attained_marks * 100 / total_marks,
+                // end fill percentage here
+                options: {
+                    fontFamily: "Calibri",
+                    drawPercentageSign: false,
+                    drawBubbles: true,
+                    size: 300,
+                    borderWidth: 19,
+                    backgroundColor: "rgba(100, 181, 96, 0.7)",
+                    foregroundColor: "#ffffff",
+                    foregroundFluidLayer: {
+                        fillStyle: "#1a963b",
+                        angularSpeed: 100,
+                        maxAmplitude: 12,
+                        frequency: 30,
+                        horizontalSpeed: -150
+                    },
+                    backgroundFluidLayer: {
+                        fillStyle: "#0b5707",
+                        angularSpeed: 100,
+                        maxAmplitude: 9,
+                        frequency: 30,
+                        horizontalSpeed: 150
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>

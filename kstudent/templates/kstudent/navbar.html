@@ -1,0 +1,33 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-sm-start fixed-top">
+    <div class="container-fluid">
+            <i class="fas fa-arrow-left" style="font-size: 1.5em; color: #ffffff; cursor: pointer;" onclick="window.history.back();"></i>
+            <a class="navbar-brand order-1 order-lg-0 ml-lg-0 ml-2 mr-auto" onclick="location.href='/kstudent';" style="display: inline-block; font-size: 20px;">College Tests</a>
+        <button class="navbar-toggler align-self-start" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse bg-light d-flex flex-column flex-lg-row flex-xl-row justify-content-lg-end mobileMenu p-4 p-lg-0 mt-5 mt-5 mt-lg-0"
+            id="navbarNav">
+            <ul class="navbar-nav align-self-stretch pl-5">
+                <li class="nav-item">
+                    <a class="nav-link" onclick="location.href='/kstudent'">
+                        <i class="fas fa-home"></i>
+                        Home</a>
+                </li>
+                <div class="static-dividers left"></div>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="location.href='/kstudent/history?semester=all'">
+                        <i class="fas fa-history icon"></i>
+                        Result History</a>
+                </li>
+                <div class="static-dividers left"></div>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="location.href='{% url 'admins-home' %}'">
+                        <i class="fas fa-sign-out-alt icon" aria-hidden="true"></i>
+                        Exit
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

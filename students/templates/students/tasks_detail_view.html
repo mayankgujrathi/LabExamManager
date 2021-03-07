@@ -1,0 +1,112 @@
+{% extends 'pages/baseStudents.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h5 class="center-align" style="margin-bottom: 1rem;">Pending For Correction Tasks ({{not_corrected_num_tasks}})</h5>
+    {% if not_corrected %}
+    <ul class="collapsible popout">
+        {% for task in not_corrected %}
+        <li>
+            <div class="collapsible-header">{{task.task.title}}<span class="blue-text" style="padding-left: 1rem;">(for {{task.task.total_marks}})</span></div>
+            <div class="collapsible-body">
+                <p>{{task.task.description}}</p>
+                <ul class="collapsible popout">
+                    <li>
+                        <div class="collapsible-header">My Response</div>
+                        <div class="collapsible-body row">
+                            <div class="col s5 __p_desc">
+                                {% for image in task.images %}
+                                    <img class="materialboxed" src="{{image.image.url}}">
+                                    <br>
+                                {% endfor %}
+                            </div>
+                            <div class="col s7">
+                                <p data-position="right"
+                                data-tooltip="Task Description"
+                                class="__p_desc tooltipped"
+                                >{{task.description}}</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="center-align">no pending for correction tasks found</p>
+    {% endif %}
+
+    <h5 class="center-align" style="margin-bottom: 1rem;">Completed Tasks ({{corrected_num_tasks}}/{{total_num_tasks}})</h5>
+    {% if corrected %}
+    <ul class="collapsible popout">
+        {% for task in corrected %}
+        <li>
+            <div class="collapsible-header">{{task.task.title}} <span class="blue-text" style="padding-left: 1rem;">(got {{task.got}} / {{task.total}})</span></div>
+            <div class="collapsible-body">
+                <p>{{task.task.description}}</p>
+                <ul class="collapsible popout">
+                    <li>
+                        <div class="collapsible-header">My Response</div>
+                        <div class="collapsible-body row">
+                            <div class="col s5 __p_desc">
+                                {% for image in task.images %}
+                                    <img class="materialboxed" src="{{image.image.url}}">
+                                    <br>
+                                {% endfor %}
+                            </div>
+                            <div class="col s7">
+                                <p data-position="right"
+                                data-tooltip="Task Description"
+                                class="__p_desc tooltipped"
+                                >{{task.description}}</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="center-align">no completed tasks found</p>
+    {% endif %}
+    <!-- <h5 class="center-align" style="margin-bottom: 1rem;">Not Attempted Tasks</h5>
+    {% if corrected %}
+    <ul class="collapsible">
+        {% for task in not_attempted %}
+        <li>
+            <div class="collapsible-header">{{task.title}}</div>
+            <div class="collapsible-body">{{task.description}}</div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="center-align">no not attempted tasks found</p>
+    {% endif %} -->
+</div>
+{% endblock content %}
+
+{% block async %}
+<style>
+    .__avatar_c {
+        height: 40px;
+        width: 40px;
+        min-width: 40px;
+        border-radius: 50%;
+        margin-right: 1rem;
+        background-size: cover;
+    }
+    img {
+        width: 100%;
+        height: 80%;
+        max-height: 280px;
+    }
+    .__p_desc {
+        height: 280px;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+</style>
+{% endblock async %}

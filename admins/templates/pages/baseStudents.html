@@ -1,0 +1,189 @@
+{% extends 'pages/basePage.html' %}
+{% load static %}
+
+{% block body %}
+<div class="navbar-fixed">
+<nav>
+  <div class="nav-wrapper teal">
+    <div class="container">
+      <a onclick="_utils.mov(`{% url 'students-home' %}`)" class="clickable brand-logo tooltipped" data-position="left" data-tooltip="Home"><i class="material-icons" style="font-size: 2.5rem;">blur_on</i></a>
+      <a data-target="mobile-sidenav" class="sidenav-trigger clickable"><i class="material-icons">menu</i></a>
+      <ul class="right hide-on-med-and-down">
+
+        <li 
+        {% if completed_tasks_view %}
+        class="tooltipped active"
+        {% else %}
+        class="tooltipped"
+        {% endif %}
+        data-position="bottom" data-tooltip="My Completed Tasks">
+          <a onclick="_utils.mov(`{% url 'students-completed-tasks' %}`)">
+            <i class="material-icons">assignment_turned_in</i>
+          </a>
+        </li>
+
+        <li 
+        {% if teaches %}
+        class="tooltipped active"
+        {% else %}
+        class="tooltipped"
+        {% endif %}
+        data-position="bottom" data-tooltip="My Instructors">
+          <a onclick="_utils.mov(`{% url 'students-teaches' %}`)">
+            <i class="material-icons">supervisor_account</i>
+          </a>
+        </li>
+
+        <li 
+        {% if reports %}
+        class="tooltipped active"
+        {% else %}
+        class="tooltipped"
+        {% endif %}
+        data-position="bottom" data-tooltip="My Reports">
+          <a onclick="_utils.mov(`{% url 'students-reports' %}`)">
+            <i class="material-icons">assignment_ind</i>
+          </a>
+        </li>
+<!-- cur -->
+        <li 
+        class="tooltipped"
+        data-position="bottom" data-tooltip="View Tests">
+          <a onclick="_utils.mov(`{% url 'home' %}`)">
+            <i class="material-icons">pending_actions</i>
+          </a>
+        </li>
+
+        <li 
+        class="tooltipped"
+        data-position="bottom" data-tooltip="Sign out Now!">
+          <a onclick="_utils.mov(`{% url 'users-logout' %}`)">
+            <i class="material-icons">logout</i>
+          </a>
+        </li>
+
+        <li 
+        class="tooltipped clickable"
+        onclick="_utils.mov(`{% url 'students-profile' %}`)"
+        data-position="right" data-tooltip="My Profile">
+          <div onclick="_utils.mov(`{% url 'students-profile' %}`)" class="_student_nav_image clickable"></div>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+</div>
+<ul class="sidenav" id="mobile-sidenav">
+  <li class="clickable" onclick="_utils.mov(`{% url 'students-profile' %}`)">
+    <div class="_student_sidnav_image"></div>
+    <h5 style="margin: 0;margin-top: .5rem; margin-bottom: 1.5rem;" class="center-align">{{ user.username }}
+      <span style="font-size: small; font-weight: 400;" class="block center-align">{{ user.email }}</span>
+    </h5>
+  </li>
+  <ul class="collection">
+
+    <li 
+    {% if completed_tasks_view %}
+    class="tooltipped collection-item active clickable"
+    {% else %}
+    class="tooltipped collection-item clickable"
+    {% endif %}
+    data-position="right" data-tooltip="My Completed Tasks">
+      <a onclick="_utils.mov(`{% url 'students-completed-tasks' %}`)">
+        <i class="material-icons left">assignment_turned_in</i>My Completed Tasks
+      </a>
+    </li>
+
+    <li 
+    {% if teaches %}
+    class="tooltipped collection-item active clickable"
+    {% else %}
+    class="tooltipped collection-item clickable"
+    {% endif %}
+    data-position="right" data-tooltip="My Instructors">
+      <a onclick="_utils.mov(`{% url 'students-teaches' %}`)">
+        <i class="material-icons left">supervisor_account</i>My Instructors
+      </a>
+    </li>
+
+    <li 
+    {% if reports %}
+    class="tooltipped collection-item active clickable"
+    {% else %}
+    class="tooltipped collection-item clickable"
+    {% endif %}
+    data-position="right" data-tooltip="My Reports">
+      <a onclick="_utils.mov(`{% url 'students-reports' %}`)">
+        <i class="material-icons left">assignment_ind</i>My Reports
+      </a>
+    </li>
+
+    <li 
+    class="tooltipped collection-item clickable"
+    data-position="right" data-tooltip="View Tests">
+      <a  onclick="_utils.mov(`{% url 'home' %}`)">
+        <i class="material-icons left">pending_actions</i>Tests
+      </a>
+    </li>
+
+    <li 
+    class="tooltipped collection-item clickable"
+    data-position="right" data-tooltip="Sign out Now!">
+      <a onclick="_utils.mov(`{% url 'users-logout' %}`)">
+        <i class="material-icons left">logout</i>Sign Out
+      </a>
+    </li>
+  </ul>
+</ul>
+<script>
+  !function(){
+    document.addEventListener('DOMContentLoaded', function() {
+      M.Sidenav.init(document.querySelectorAll('.sidenav'))
+      M.Collapsible.init(document.querySelectorAll('.collapsible'))
+      M.Tooltip.init(document.querySelectorAll('.tooltipped'))
+      M.Modal.init(document.querySelectorAll('.modal'))
+      M.Tabs.init(document.querySelectorAll('.tabs', {swipeable: true}))
+      M.Timepicker.init(document.querySelectorAll('.timepicker'))
+      M.Datepicker.init(document.querySelectorAll('.datepicker'))
+      M.Materialbox.init(document.querySelectorAll('.materialboxed'))
+      M.Carousel.init(document.querySelectorAll('.carousel'), {
+        numVisible: 10,
+        padding: 40,
+        shift: 55,
+      })
+    })
+  }()
+</script>
+<style>
+  ._student_nav_image {
+    display: block;
+    margin: auto;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    background-image: url('{{ user.student_profile.image.url }}');
+    background-size: cover;
+    margin-top: 12px;
+    margin-left: 2.5rem;
+  }
+  ._student_sidnav_image {
+    display: block;
+    margin: auto;
+    height: 200px;
+    width: 200px;
+    border-radius: 50%;
+    background-image: url('{{ user.student_profile.image.url }}');
+    background-size: cover;
+    margin-top: 1rem;
+  }
+</style>
+{% block content %}
+{% endblock content %}
+
+{% endblock body %}
+
+{% block extra %}
+  {% block async %}
+  {% endblock async %}
+{% endblock extra %}

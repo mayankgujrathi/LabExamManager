@@ -1,0 +1,12 @@
+{% extends "kstudent/index_student.html" %}
+
+{% block changeContent1 %}
+
+<div>
+    <h3>{{ reason }}</h3>
+    {% if custom_flag == 0 %}
+        <button class="btn btn-custom two" onclick="location.href='/kstudent/history/?semester=all';" style="margin-top: 1em; animation: slide_animation_bottom; animation-duration: 1700ms;">History</button>
+    {% endif %}
+</div>
+
+{% endblock %}

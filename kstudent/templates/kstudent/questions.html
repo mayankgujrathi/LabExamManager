@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam</title>
+    <link rel="stylesheet" href="{% static 'css/questions.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/examTimer.css' %}">
+</head>
+
+<body onload="customOnloadTrigger({{ exam_duration }})">
+    <div class="questionBeforeDiv" style="background-color: #00796b;color: #fff;">
+        {% include "kstudent/examTimer.html" %}
+    </div>
+
+    <form style="margin: 30px 0 0 20px;" action="../marks/" method="POST" name="questionForm">
+        {% csrf_token %}
+        <div>
+        {% for i in questionsList %}
+
+        {% if i.Question_Type|lower == "mcq" %}
+        <div class="card" style="margin-bottom: 3em;">
+            <div class="card-header" style="padding-bottom: 0em !important;">
+                    <span style="display: inline-block; font-size: 1.2em;">{{forloop.counter}}.&nbsp;</span>
+                    <p style="display: inline-block; font-size: 1.2em;">{{ i.Question }}</p>
+            </div>
+        <div class="optiondiv">
+            <div class="optioninnerdiv">
+                <div class="input-group my-input-group p-1 w-75">
+                    <div class="input-group-text my-input-group1">
+                        <input type="radio" class="form-check-input" name="{{ i.id }}" id="radio_1_{{ i.id }}"
+                            value="1">
+                    </div>
+                    <label class="form-check-label" for="radio_1_{{ i.id }}">
+                        {{ i.Option_1 }}
+                    </label>
+                </div>
+
+                <div class="input-group my-input-group p-1 w-75">
+                    <div class="input-group-text my-input-group1">
+                        <input type="radio" class="form-check-input" name="{{ i.id }}" id="radio_2_{{ i.id }}"
+                            value="2">
+                    </div>
+                    <label class="form-check-label" for="radio_2_{{ i.id }}">
+                        {{ i.Option_2 }}
+                    </label>
+                </div>
+
+                <div class="input-group my-input-group p-1 w-75">
+                    <div class="input-group-text my-input-group1">
+                        <input type="radio" class="form-check-input" name="{{ i.id }}" id="radio_3_{{ i.id }}"
+                            value="3">
+                    </div>
+                    <label class="form-check-label" for="radio_3_{{ i.id }}">
+                        {{ i.Option_3 }}
+                    </label>
+                </div>
+
+                <div class="input-group my-input-group p-1 w-75">
+                    <div class="input-group-text my-input-group1">
+                        <input type="radio" class="form-check-input" name="{{ i.id }}" id="radio_4_{{ i.id }}"
+                            value="4">
+                    </div>
+                    <label class="form-check-label" for="radio_4_{{ i.id }}">
+                        {{ i.Option_4 }}
+                    </label>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- <hr/> -->
+
+        {% elif i.Question_Type|lower == "fib" %}
+        <div style="margin-bottom: 3em;">
+            <span class="qnNo">{{ forloop.counter }}.&ensp;{{ i.Question }}</span>
+            &ensp;
+            <input type="text" class="form-control" id="inputText_{{ i.id }}"
+                style="width: 11em; height: 2em; display: inline-block; font-size: 14px;" name="{{ i.id }}" autocomplete="off">
+         </div>
+
+        {% endif %}
+
+
+        {% endfor %}
+    </div>
+        <div style="text-align: center; margin-bottom: 2em;">
+            <button class="btn btn-md btn-outline-success" onclick="location.href = '/kstudent/questions'">SUBMIT</button>
+        </div>
+    </form>
+</body>
+<script>
+    function deselectSelection(event) {
+        event.preventDefault();
+    }
+</script>
+<script src="{% static 'js/examTimer.js' %}"></script>
+
+</html>

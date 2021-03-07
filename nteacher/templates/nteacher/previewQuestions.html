@@ -1,0 +1,362 @@
+ {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="{% static 'CSS/bootstrap.css' %}" rel="stylesheet" />
+    <link href="{% static 'CSS/mycss.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'CSS/fontawesome/css/fontawesome.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'CSS/animate.min.css' %}" />
+    <title>Teacher</title>
+  </head>
+  <body>
+     <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-sm-start fixed-top">
+      <div class="container-fluid">
+        <p class="bg-light mx-4 mb-0 mybackarrow" onclick="window.history.go(-1); return false;"><i class="fas fa-arrow-left" style="color:#fff;font-size:30px;"></i></p>
+        <a class="navbar-brand order-1 order-lg-0 ml-lg-0 mx-2 mr-auto">College Tests</a>
+        <button class="navbar-toggler align-self-start" type="button">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse bg-light d-flex flex-column flex-lg-row flex-xl-row justify-content-lg-end mobileMenu p-4 p-lg-0 mt-5 mt-5 mt-lg-0" id="navbarNav">
+          <ul class="navbar-nav align-self-stretch pl-5">
+            <li class="nav-item clickable">
+              <a class="nav-link active" aria-current="page" onclick="location.href='{% url 'Home' %}'">
+                <i class="fas fa-home icon"></i>Home</a>
+            </li>
+            <li class="nav-item clickable">
+              <a class="nav-link " aria-current="page" onclick="location.href='{% url 'PrepareTest' %}'">
+                <i class="fas fa-book icon" aria-hidden="true"></i>Prepare Test</a>
+            </li>
+            <li class="nav-item clickable">
+              <a class="nav-link" onclick="location.href='{% url 'Viewtesthistory' %}'">
+                <i class="fas fa-file-pdf icon"></i>View Test Results</a>
+            </li>
+            <li class="nav-item clickable">
+              <a class="nav-link" onclick="location.href='{% url 'admins-home' %}'">
+                <i class="fas fa-sign-out-alt icon" aria-hidden="true"></i>
+                Exit 
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div id="previewQuestion">
+        {% if messages %}
+                {% for message in messages %}
+
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Hold On!</strong> {{message}}
+                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+                            </button>
+                        </div>
+                    {% endif %}
+
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Success!</strong> {{message}}
+                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+                            </button>
+                        </div>
+                    {% endif %}
+
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                            <strong>Deleted!</strong> {{message}}
+                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+                            </button>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+        {% endif %}
+        <h3 class="heading1">Questions</h3>
+        {% if Questions %}
+            {% for question in Questions %}
+            <div id="previewQuestioninner2" style="animation:none;">
+                <form action="{% url 'previewQuestions' %}" method="post" id="form3">
+                {% csrf_token %}
+                <div id="{{ question.id }}">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text" id="inputGroup-sizing-lg">Question {{forloop.counter}}.</span>
+                        <input type="text" id="question{{ question.id }}" class="form-control" name="question" value="{{ question.Question }}" readonly><br />
+                    </div>
+                    <h5 style="font-size: 17px;opacity: 0.7;" class="m-3">
+                        <span><b>Options:</b></span>
+                    </h5>
+                {% if question.Question_Type == "MCQ" %}
+                        {% if question.Answer == "1" %}
+                        <div class="optiondiv">
+                            <div class="optioninnerdiv">
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_11" value="1" checked>
+                                    </div>
+                                    <input type="text"  class="form-control" name="input_radio_text_1" value="{{ question.Option_1 }}" readonly>
+                                </div>
+
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_22" value="2">
+                                    </div>    
+                                    <input type="text" class="form-control" name="input_radio_text_2" value="{{ question.Option_2 }}" readonly><br />
+                                </div>
+
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_33" value="3">
+                                    </div>
+                                    <input type="text" class="form-control" name="input_radio_text_3" value="{{ question.Option_3 }}" readonly><br />
+                                </div>
+
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_44" value="4">
+                                    </div>
+                                    <input type="text" class="form-control" name="input_radio_text_4" value="{{ question.Option_4 }}" readonly><br />
+                                </div>
+                            </div>
+                            <div class="container mt-3 mt-lg-2 mx-4" >
+                                <div class="row align-items-center">
+                                    <div class="col-lg-8 col-md-12 col-sm-12  align-items-center p-3">
+                                        <button type="button" id="btnedit_{{ question.id }}" class="btn my-btn btn-lg col-5" >
+                                        <i class="fas fa-edit mx-3 mx-md-1 mx-sm-0"></i>
+                                        Edit 
+                                        </button><br>
+                                        <button type="submit" name="_save" id="btnsave_{{ question.id }}" class="btn my-btn btn-lg col-5 disabled my-4" >
+                                        <i class="fas fa-save mx-3 mx-md-1 mx-sm-0"></i>
+                                        Save
+                                        </button><br>
+                                        <button type="submit" name="_delete" class="btn btn-danger btn-lg col-5 my-1">
+                                        <i class="fas fa-trash mx-3 mx-md-1 mx-sm-0"></i>
+                                        Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>   
+                        {% elif question.Answer == "2" %}
+                        <div class="optiondiv">
+                            <div class="optioninnerdiv">
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_11" value="1">
+                                    </div>
+                                    <input type="text" class="form-control"  name="input_radio_text_1" value="{{ question.Option_1 }}" readonly><br />
+                                </div>
+
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_22" value="2" checked>
+                                    </div>
+                                    <input type="text" class="form-control" name="input_radio_text_2" value="{{ question.Option_2 }}" readonly><br />
+                                </div>
+
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_33" value="3">
+                                    </div>
+                                    <input type="text" class="form-control" name="input_radio_text_3" value="{{ question.Option_3 }}" readonly><br />
+                                </div>
+
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_44" value="4">
+                                    </div>
+                                    <input type="text" class="form-control" name="input_radio_text_4" value="{{ question.Option_4 }}" readonly><br />
+                                </div>
+                            </div>
+                            <div class="container mt-3 mt-lg-2 mx-4" >
+                                <div class="row align-items-center">
+                                    <div class="col-lg-8 col-md-12 col-sm-12  align-items-center p-3">
+                                        <button type="button" id="btnedit_{{ question.id }}" class="btn my-btn btn-lg col-5" >
+                                        <i class="fas fa-edit mx-3 mx-md-1 mx-sm-0"></i>
+                                        Edit 
+                                        </button><br>
+                                        <button type="submit" name="_save" id="btnsave_{{ question.id }}" class="btn my-btn btn-lg col-5 disabled my-4" >
+                                        <i class="fas fa-save mx-3 mx-md-1 mx-sm-0"></i>
+                                        Save
+                                        </button><br>
+                                        <button type="submit" name="_delete" class="btn btn-danger btn-lg col-5 my-1">
+                                        <i class="fas fa-trash mx-3 mx-md-1 mx-sm-0"></i>
+                                        Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>
+                        {% elif question.Answer == "3" %} 
+                        <div class="optiondiv">
+                            <div class="optioninnerdiv">
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_11" value="1">
+                                    </div>
+                                    <input type="text" class="form-control" name="input_radio_text_1" value="{{ question.Option_1 }}" readonly><br />
+                                </div>
+
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_22" value="2">
+                                    </div>
+                                    <input type="text" class="form-control" name="input_radio_text_2" value="{{ question.Option_2 }}" readonly><br />
+                                </div>
+
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_33" value="3" checked>
+                                    </div>
+                                    <input type="text" class="form-control" name="input_radio_text_3" value="{{ question.Option_3 }}" readonly><br />
+                                </div>
+
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_44" value="4">
+                                    </div>
+                                    <input type="text" class="form-control" name="input_radio_text_4" value="{{ question.Option_4 }}" readonly><br />
+                                </div>
+                            </div>
+                            <div class="container mt-3 mt-lg-2 mx-4" >
+                                <div class="row align-items-center">
+                                    <div class="col-lg-8 col-md-12 col-sm-12 align-items-center p-3"   >
+                                        <button type="button" id="btnedit_{{ question.id }}" class="btn my-btn btn-lg col-5" >
+                                        <i class="fas fa-edit mx-3 mx-md-1 mx-sm-0"></i>
+                                        Edit 
+                                        </button><br>
+                                        <button type="submit" name="_save" id="btnsave_{{ question.id }}" class="btn my-btn btn-lg col-5 disabled my-4" >
+                                        <i class="fas fa-save mx-3 mx-md-1 mx-sm-0"></i>
+                                        Save
+                                        </button><br>
+                                        <button type="submit" name="_delete" class="btn btn-danger btn-lg col-5 my-1">
+                                        <i class="fas fa-trash mx-3 mx-md-1 mx-sm-0"></i>
+                                        Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>    
+                        </div>
+                        {% elif question.Answer == "4" %}
+                        <div class="optiondiv">
+                            <div class="optioninnerdiv">
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_11" value="1">
+                                    </div>
+                                    <input type="text" class="form-control" name="input_radio_text_1" value="{{ question.Option_1 }}" readonly><br />
+                                </div>
+
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_22" value="2">
+                                    </div>
+                                    <input type="text" class="form-control" name="input_radio_text_2" value="{{ question.Option_2 }}" readonly><br />
+                                </div>
+
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_33" value="3">
+                                    </div>
+                                    <input type="text" class="form-control" name="input_radio_text_3" value="{{ question.Option_3 }}" readonly><br />
+                                </div>
+
+                                <div class="input-group my-input-group p-1 w-75" >
+                                    <div class="input-group-text my-input-group1">
+                                        <input type="radio" class="form-check-input" name="Option_radio_{{ question.id }}" id="radio_44" value="4" checked>
+                                    </div>
+                                    <input type="text" class="form-control" name="input_radio_text_4" value="{{ question.Option_4 }}" readonly><br />
+                                </div>
+                            </div>
+                            <div class="container mt-3 mt-lg-2 mx-4" >
+                                <div class="row align-items-center">
+                                    <div class="col-lg-8 col-md-12 col-sm-12 align-items-center p-3"   >
+                                        <button type="button" id="btnedit_{{ question.id }}" class="btn my-btn btn-lg col-5" >
+                                        <i class="fas fa-edit mx-3 mx-md-1 mx-sm-0"></i>
+                                        Edit 
+                                        </button><br>
+                                        <button type="submit" name="_save" id="btnsave_{{ question.id }}" class="btn my-btn btn-lg col-5 disabled my-4" >
+                                        <i class="fas fa-save mx-3 mx-md-1 mx-sm-0"></i>
+                                        Save
+                                        </button><br>
+                                        <button type="submit" name="_delete" class="btn btn-danger btn-lg col-5 my-1">
+                                        <i class="fas fa-trash mx-3 mx-md-1 mx-sm-0"></i>
+                                        Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>    
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                {% if question.Question_Type == "FIB" %}
+                    <div class="optiondiv">
+                        <div class="input-group my-input-group p-1 w-75 h-50">
+                        <span class="input-group-text">Answer</span>
+                        <input type="text" name="Answer_blank" value="{{ question.Answer }}" class="form-control" placeholder="numpy" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" readonly>
+                        </div>
+                        <div class="container mt-3 mt-lg-2 mx-4" >
+                            <div class="row align-items-center">
+                                <div class="col-lg-8 col-md-12 col-sm-12 align-items-center p-3">
+                                    <button type="button" id="btnedit_{{ question.id }}" class="btn my-btn btn-lg col-5" >
+                                    <i class="fas fa-edit mx-3 mx-md-1 mx-sm-0"></i>
+                                    Edit 
+                                    </button><br>
+                                    <button type="submit" name="_save1" id="btnsave_{{ question.id }}" class="btn my-btn btn-lg col-5 disabled my-4" >
+                                    <i class="fas fa-save mx-3 mx-md-1 mx-sm-0"></i>
+                                    Save
+                                    </button><br>
+                                    <button type="submit" name="_delete" class="btn btn-danger btn-lg col-5 my-1">
+                                    <i class="fas fa-trash mx-3 mx-md-1 mx-sm-0"></i>
+                                    Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>    
+                    </div>
+                {% endif %}
+                </div>
+                    <input type='hidden' value='{{ question.id }}' name='id'>
+                </form>
+            </div>
+                <hr style="border:solid 3px #ccc;" class="my-5">
+            {% endfor %}
+        {% else %}
+            <h4 class="text-capitalize text-center mt-5">No Questions Found!</h4>
+        {% endif %}    
+    </div>
+    <script>window.$ = window.jQuery = require('jquery');</script>
+    <script src="{% static 'JS/jquery.min.js' %}" ></script>
+    <script src="{% static 'CSS/fontawesome/js/all.min.js' %}"></script>
+    <script src="{% static 'JS/popper.min.js' %}" ></script>
+    <script src="{% static 'JS/bootstrap.bundle.js' %}" ></script>
+    <script src="{% static 'JS/bootstrap1.min.js' %}" ></script>
+    <script src="{% static 'JS/myjs.js' %}" ></script>
+    <script>
+        !function(){
+            document.addEventListener('DOMContentLoaded',function(){
+                document.querySelectorAll("form").forEach(Element => Element.querySelectorAll("button").forEach(item => {
+                    item.addEventListener("click",function(){
+                    let id = item.id.split('_')[1]
+                    let name = item.name
+                    let elements = document.getElementById(id).querySelectorAll("input")
+                    if(name == '_save1' || name == '_save'){
+                        for(let ele of elements) ele.readOnly = true;
+                        document.getElementById("question"+id).readOnly = true;
+                        document.getElementById("btnedit_"+id).classList.remove("disabled")
+                        document.getElementById("btnsave_"+id).classList.add("disabled");
+                    }
+                    else{
+                        for(let ele of elements) ele.readOnly = false;
+                        document.getElementById("question"+id).readOnly = false;
+                        document.getElementById("btnsave_"+id).classList.remove("disabled")
+                        document.getElementById("btnedit_"+id).classList.add("disabled");
+                    }
+                    })
+                })
+                )
+            })
+        }()
+    </script>
+    </body>
+    </html>

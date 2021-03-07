@@ -1,0 +1,124 @@
+{% extends 'pages/baseAdmin.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row" style="width: 98%; margin: auto;">
+    <div class="col s3 collection" style="overflow-x: hidden; overflow-y: auto; height: 85vh;">
+        <div class="collapsible-header">
+            <h6 class="center-align">Saved Reports</h6>
+        </div>
+        {% if sidenav_sessions %}
+        {% for session in sidenav_sessions %}
+        <div class="hoverable collection-item {% if session.active %} active {% endif %}">
+            <span id="{{session.id}}" class="clickable __session_btn responsive-text">{{session.title}}</span>
+            <div class="secondary-content" style="display: flex; justify-content: center;">
+                <i 
+                    {% if session.active %}
+                        status="active"
+                    {% else %}
+                        status="not_active"
+                    {% endif %}
+                    id="{{session.id}}"
+                    data-position="right"
+                    data-tooltip="Delete, action is not revertable"
+                    class="material-icons tooltipped  __delete_session_btn clickable">delete</i>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="collection-item">
+            <p class="center-align light">no Saves found</p>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col s9" style="overflow-x: auto;">
+        <i style="margin-top: 1rem;" class="material-icons block clickable blue-text right" onclick="window.print()">print</i>
+        <div class="section-to-print">
+            <h3 class="center-align">{{session_title}}</h3>
+            <h5 class="center-align">Attended Students Were {{data_len}}</h5>
+            <table class="centered" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>PIN</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Mail Address</th>
+                    <th>Phone</th>
+                    <th>Marks (By Attended)</th>
+                    <th>Marks (By All)</th>
+                    <th>Tasks Attended</th>
+                    <th>Percentage (By Attended)</th>
+                    <th>Percentage (By All)</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for stu in data %}
+                <tr>
+                    <td>{{stu.username}}</td>
+                    <td>{{stu.first_name}}</td>
+                    <td>{{stu.last_name}}</td>
+                    <td>{{stu.email}}</td>
+                    <td>{{stu.phone}}</td>
+                    <td>{{stu.got_marks}}/{{stu.student_total_marks}}</td>
+                    <td>{{stu.got_marks}}/{{stu.total_marks_all_tasks}}</td>
+                    <td>{{stu.attended_tasks}}/{{stu.total_num_tasks}}</td>
+                    <td>{{stu.got_percentage}}%</td>
+                    <td>{{stu.all_percentage}}%</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>        
+            {% if not data %}
+                <p class="center-align">no Students found</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block async %}
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        document.querySelectorAll('.__session_btn').forEach(item => item
+        .addEventListener('click', event => {
+            _utils.mov(`/admins_saves_reports/${event.target.id}`)
+        }))
+        document.querySelectorAll('.__delete_session_btn').forEach(item => item
+        .addEventListener('click', event => {
+            status = event.target.getAttribute('status')
+            M.toast({
+                html: '<i class="material-icons yellow-text">warning</i>&ensp;Operation can\'t be reverted<button id="__sdelete_final" class="btn-flat toast-action">Delete</button>',
+                classes: 'rounded'
+            })
+
+            document.getElementById('__sdelete_final').addEventListener('click', e => {
+                if (status === 'active') {
+                    const id = event.target.id
+                    _utils.delete(`{% url 'admins-api-save-reports' %}`, {id: id}).then(res => {
+                        if (res.status === 202) {
+                            _utils.get(`{% url 'admins-api-save-reports' %}`).then(res => {
+                                if (res.status === 202) {
+                                    _utils.mov(`/admins_saves_reports/${res.error}`)
+                                } else {
+                                    _utils.mov(`{% url 'admins-home' %}`)
+                                }
+                            })
+                        } else {
+                            _utils.dismiss(() => _utils.error(res.error))
+                        }
+                    })
+                } else {
+                    const id = event.target.id
+                    _utils.delete(`{% url 'admins-api-save-reports' %}`, {id: id}).then(res => {
+                        if (res.status === 202) {
+                            _utils.dismiss(() => _utils.success('Successfully Deleted!', _utils.deload))
+                        } else {
+                            _utils.dismiss(() => _utils.error(res.error))
+                        }
+                    })
+                }
+            })
+        }))
+    })
+</script>
+{% endblock async %}

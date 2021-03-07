@@ -1,0 +1,106 @@
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Light.ttf");
+}
+
+@font-face {
+  font-family: "Raleway";
+  src: url("../fonts/Raleway-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Source Sans";
+  src: url("../fonts/SourceSansPro-Regular.ttf");
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body::-webkit-scrollbar {
+  width: 0.5rem;
+}
+body::-webkit-scrollbar-thumb {
+  background-color: rgb(0, 150, 136);
+  border-radius: 0.2rem;
+}
+body::-webkit-scrollbar-track {
+  background-color: rgba(0, 150, 136, 0.4);
+}
+
+
+.navbar-brand {
+  margin-left: 1%;
+}
+
+.makeFlex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.card-header {
+  font-family: "Montserrat";
+  font-weight: bold;
+}
+
+.card-body {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-column-gap: 1em;
+  font-size: 1.3em;
+}
+
+.card-title {
+  text-align: right;
+  font-family: "Raleway";
+  font-weight: bold;
+}
+
+.card-text {
+  text-align: left;
+  font-family: "Source Sans";
+}
+
+.btn.btn-custom {
+  background-color: #00796b;
+  color: #fff;
+}
+
+.makeFlex div h3 {
+  font-family: "Raleway";
+  animation-name: slide_animation_top;
+  animation-duration: 1700ms;
+}
+
+.makeFlex div .btn.btn-custom.one {
+  margin-top: 1em;
+  animation-name: slide_animation_bottom;
+  animation-duration: 1700ms;
+}
+
+.makeFlex div {
+  text-align: center;
+}
+
+@keyframes slide_animation_top {
+  0% {
+    transform: translateY(-600%);
+  }
+  100% {
+    transform: translate(0%);
+  }
+}
+
+@keyframes slide_animation_bottom {
+  0% {
+    transform: translateY(600%);
+  }
+  100% {
+    transform: translate(0%);
+  }
+}

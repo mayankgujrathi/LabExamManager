@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam</title>
+    <link rel="stylesheet" href="{% static 'css/questions.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/examTimer.css' %}">
+</head>
+
+<body onload="customOnloadTrigger({{ exam_duration }})">
+    <div class="questionBeforeDiv" style="background-color: #00796b;color: #fff;">
+        {% include "kstudent/examTimer.html" %}
+    </div>
+
+
+    <div style="text-align: center; padding: 2em 0;">
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">Stop Exam</button>
+    </div>
+    
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                        <div class="modal-body">
+                        Are you sure that you want to stop the exam and write in other PC?
+                        </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" onclick="stopTimerAddRemainingTimerToDict();">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <form style="margin: 30px 0 0 20px;" action="{% if isLastQuestion %}../showingMarks/{% else %}../performOperations/{% endif %}" method="POST" name="questionForm">
+        {% csrf_token %}
+        <div>
+        <input type="text" style="display: none;" name="getId" value="{{ question.id }}" />
+        {% if question.Question_Type|lower == "mcq" %}
+        <div class="card" style="margin-bottom: 3em;">
+            <div class="card-header" style="padding-bottom: 0em !important;">
+                    <span style="display: inline-block; font-size: 1.2em;">Q.&nbsp;</span>
+                    <p style="display: inline-block; font-size: 1.2em;">{{ question.Question }}</p>
+            </div>
+        <div class="optiondiv">
+            <div class="optioninnerdiv">
+                <div class="input-group my-input-group p-1 w-75">
+                    <div class="input-group-text my-input-group1">
+                        <input type="radio" class="form-check-input" name="{{ question.id }}" id="radio_1_{{ question.id }}"
+                            value="1">
+                    </div>
+                    <label class="form-check-label" for="radio_1_{{ question.id }}">
+                        {{ question.Option_1 }}
+                    </label>
+                </div>
+
+                <div class="input-group my-input-group p-1 w-75">
+                    <div class="input-group-text my-input-group1">
+                        <input type="radio" class="form-check-input" name="{{ question.id }}" id="radio_2_{{ question.id }}"
+                            value="2">
+                    </div>
+                    <label class="form-check-label" for="radio_2_{{ question.id }}">
+                        {{ question.Option_2 }}
+                    </label>
+                </div>
+
+                <div class="input-group my-input-group p-1 w-75">
+                    <div class="input-group-text my-input-group1">
+                        <input type="radio" class="form-check-input" name="{{ question.id }}" id="radio_3_{{ question.id }}"
+                            value="3">
+                    </div>
+                    <label class="form-check-label" for="radio_3_{{ question.id }}">
+                        {{ question.Option_3 }}
+                    </label>
+                </div>
+
+                <div class="input-group my-input-group p-1 w-75">
+                    <div class="input-group-text my-input-group1">
+                        <input type="radio" class="form-check-input" name="{{ question.id }}" id="radio_4_{{ question.id }}"
+                            value="4">
+                    </div>
+                    <label class="form-check-label" for="radio_4_{{ question.id }}">
+                        {{ question.Option_4 }}
+                    </label>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- <hr/> -->
+
+        {% elif question.Question_Type|lower == "fib" %}
+        <div style="margin-bottom: 3em;">
+            <span class="qnNo">Q.&ensp;{{ question.Question }}</span>
+            &ensp;
+            <input type="text" class="form-control" id="inputText_{{ question.id }}"
+                style="width: 11em; height: 2em; display: inline-block; font-size: 14px;" name="{{ question.id }}" autocomplete="off">
+         </div>
+
+        {% endif %}
+    </div>
+        <div style="text-align: center; margin-bottom: 2em;">
+            <button class="btn btn-md btn-outline-success" type="submit">{% if isLastQuestion %}SUBMIT{% else %}NEXT{% endif %}</button>
+        </div>
+    </form>
+</body>
+<script>
+    function deselectSelection(event) {
+        event.preventDefault();
+    }
+    function stopTimerAddRemainingTimerToDict() {
+        location.href=`/kstudent/delayExam/?gracePeriod=${(sessionStorage.getItem("examEndTime") - new Date().getTime())/(1000*60)}`;
+    }
+
+</script>
+<script src="{% static 'bootstrap/js/bootstrap.bundle.js' %}"></script>
+<script src="{% static 'js/examTimer.js' %}"></script>
+
+</html>

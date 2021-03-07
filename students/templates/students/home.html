@@ -1,0 +1,70 @@
+{% extends 'pages/baseStudents.html' %}
+
+{% block content %}
+<div class="container">
+  <h5 class="center-align">Active Tasks</h5>
+  <ul class="collapsible popout">
+    {% for archive in active_tasks %}
+    <li>
+      <div class="responsive-text collapsible-header avatar">
+        <div class="__avatar circle" style="background-image: url({{archive.teacher.admin_profile.image.url}});"></div>
+        <div>
+          <span style="padding-left: 1rem; font-size: large; font-weight: 500;">
+            {% if not archive.teacher.first_name or archive.teacher.last_name %}
+              ({{archive.teacher.username}})
+            {% else %}
+              {{archive.teacher.first_name}} {{archive.teacher.last_name}}
+            {% endif %}
+          </span>
+          <br>
+          <span class="block" style="padding-left: 1rem; font-size: .9rem; color: grey;">
+            {% if not archive.task_len %}
+              no active task
+            {% else %}
+              active tasks are {{archive.task_len}}
+            {% endif %}
+          </span>
+        </div>
+      </div>
+      <div class="collapsible-body">
+        <ul class="collapsible popout">
+          {% if archive.tasks %}
+          {% for task in archive.tasks %}
+          <li>
+            <div class="collapsible-header responsive-text">{{task.title}}</div>
+            <div class="collapsible-body">
+              <p class="responsive-text">{{task.description}}</p>
+              <br/>
+              <button
+                id="{{task.id}}"
+                data-position="top"
+                data-tooltip="Manage Task"
+                onclick="_utils.mov(`{% url 'students-teaches' %}{{ archive.teacher.id }}`)"
+                class="clickable tooltipped btn btn-flat blue-text waves-effect waves-blue white"
+              >
+              View
+              </button>
+            </div>
+          </li>   
+          {% endfor %}
+          {% else %}
+            <p class="center-align">No Task Found</p>
+          {% endif %}
+        </ul>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock content %}
+
+{% block async %}
+<style>
+  .__avatar {
+      height: 40px;
+      width: 40px;
+      background-size: cover;
+      border-radius: 50%;
+  }
+</style>
+{% endblock async %}

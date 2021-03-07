@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" type="text/css" href="{% static 'lib/lib.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'lib/cust.css' %}">
+  <script type="text/javascript" src="{% static 'lib/lib.js' %}"></script>
+  <script type="text/javascript" src="{% static 'lib/cust.js' %}" defer></script>
+  {% if title %}
+  <title>{{ title }}</title>
+  {% else %}
+  <title>Page</title>
+  {% endif %}
+  {% block head %}
+  {% endblock head %}
+</head>
+<body>
+  {% block body %}
+  {% endblock body %}
+</body>
+  {% block extra %}
+  {% endblock extra %}
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // {% for message in messages %}
+        // {%if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+          _utils.info('{{message}}')
+        // {% endif %}
+        // {%if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+          _utils.error('{{message}}')
+        // {% endif %}
+        // {%if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+          _utils.warning('{{message}}')
+        // {% endif %}
+        // {%if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+          _utils.success('{{message}}')
+        // {% endif %}
+      // {% endfor %}
+      // disable draggable of images
+      document.querySelectorAll('img').forEach(img => {
+        img.setAttribute('draggable', false)
+      })
+    })
+  </script>
+</html>

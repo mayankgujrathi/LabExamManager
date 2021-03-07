@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="{% static 'CSS/bootstrap.css' %}" rel="stylesheet" />
+    <link href="{% static 'CSS/mycss.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'CSS/fontawesome/css/fontawesome.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'CSS/animate.min.css' %}" />
+    <title>Teacher</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-sm-start fixed-top">
+      <div class="container-fluid">
+        <p class="bg-light mx-4 mb-0 mybackarrow" onclick="window.history.go(-1); return false;"><i class="fas fa-arrow-left" style="color:#fff;font-size:30px;"></i></p>
+        <a class="navbar-brand order-1 order-lg-0 ml-lg-0 mx-2 mr-auto">College Tests</a>
+        <button class="navbar-toggler align-self-start" type="button">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse bg-light d-flex flex-column flex-lg-row flex-xl-row justify-content-lg-end mobileMenu p-4 p-lg-0 mt-5 mt-5 mt-lg-0" id="navbarNav">
+          <ul class="navbar-nav align-self-stretch pl-5">
+            <li class="nav-item clickable">
+              <a class="nav-link active" aria-current="page" onclick="location.href='{% url 'Home' %}'">
+                <i class="fas fa-home icon"></i>Home</a>
+            </li>
+            <li class="nav-item clickable">
+              <a class="nav-link " aria-current="page" onclick="location.href='{% url 'PrepareTest' %}'">
+                <i class="fas fa-book icon" aria-hidden="true"></i>Prepare Test</a>
+            </li>
+            <li class="nav-item clickable">
+              <a class="nav-link" onclick="location.href='{% url 'Viewtesthistory' %}'">
+                <i class="fas fa-file-pdf icon"></i>View Test Results</a>
+            </li>
+            <li class="nav-item clickable">
+              <a class="nav-link">
+                <i class="fas fa-sign-out-alt icon" aria-hidden="true"></i>
+                Sign Out
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <script>window.$ = window.jQuery = require('jquery');</script>
+    <script src="{% static 'JS/jquery.min.js' %}" defer></script>
+    <script src="{% static 'CSS/fontawesome/js/all.min.js' %}" defer></script>
+    <script src="{% static 'JS/popper.min.js' %}" defer></script>
+    <script src="{% static 'JS/bootstrap.bundle.js' %}" defer></script>
+    <script src="{% static 'JS/bootstrap1.min.js' %}" defer></script>
+    <script src="{% static 'JS/myjs.js' %}" defer></script>
+  </body>
+</html>

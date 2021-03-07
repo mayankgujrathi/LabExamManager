@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results History</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/resultHistory.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbarCSS.css' %}">
+</head>
+
+<body>
+    {% include "kstudent/navbar.html" %}
+
+    {% load custom_filters %}
+
+  {% if marksDetails == None and ErrorCode == 1 %}
+
+    <div class="customClassNoResults">
+      <h3>Looks like no exams are written yet!</h3>
+    </div>
+  
+  {% elif marksDetails == None and ErrorCode == 0 %}
+
+    <div class="customClassNoResults">
+      <h3>No semester exists!</h3>
+    </div>
+  
+  
+  {% else %}
+
+  <div class="dropdown" style="margin: 5em 0 2em 0;">
+    <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+      Select Semester
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <li><a class="dropdown-item" onclick="location.href='/kstudent/history/?semester=all';">All</a></li>
+      {% for everySemester in ExamWrittenSemesters %}
+        <li><a class="dropdown-item" onclick="location.href='/kstudent/history/?semester={{ everySemester }}';">{{ everySemester }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+
+    <div class="accordion" id="accordionExample">
+      {% for key, values in marksDetails.items %}
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading_{{ forloop.counter }}">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse_{{ forloop.counter }}">
+              {{ key }}
+            </button>
+          </h2>
+          <div id="collapse_{{ forloop.counter }}" class="accordion-collapse collapse show" aria-labelledby="heading_{{ forloop.counter }}" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">S.No</th>
+                    <th scope="col">Exam Name</th>
+                    <th scope="col">Marks</th>
+                    <th scope="col">Time Taken(mins)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for j in values %}
+                    <tr>
+                      <th scope="row">{{ forloop.counter }}</th>
+                      <td>{{ j.Batch_Shift_Exam|getTheExamOnlyName }}</td>
+                      <td>{{ j.Marks }}</td>
+                      <td>{{ j.Time_Taken }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+    </div>
+
+  {% endif %}
+
+    <script src="{% static 'js/navbarJS.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.js' %}"></script>
+    <script src="{% static 'js/all.min.js' %}"></script>
+</body>
+
+</html>

@@ -1,0 +1,389 @@
+{% extends 'pages/baseStudents.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="margin: 1rem auto">
+    <input type="file" name="image" accept="image/*"  id="_p_file" style="display:none">
+    <label for="_p_file" draggable="false" class="rounded center-align _profile_image clickable"></label>
+  <!-- </form> -->
+  <div class="collection">
+    <div class="collection-item">
+      <h5>Computer Name</h5>
+      <span>{{user.student_profile.hostname}}</span>
+    </div>
+    <div class="collection-item">
+      <h5>Username</h5>
+      <span>{{user.username}}</span>
+    </div>
+    <div class="collection-item">
+      <h5 id="_first_name">First Name</h5>
+      <span id="_first_name_value">{{user.first_name}}</span>
+    </div>
+    <div class="collection-item">
+      <h5 id="_last_name">Last Name</h5>
+      <span id="_last_name_value">{{user.last_name}}</span>
+    </div>
+    <div class="collection-item">
+      <h5>Email</h5>
+      <span>{{user.email}}</span>
+    </div>
+
+
+    <div class="collection-item">
+      <h5 id="_address">Address</h5>
+      {% if user.student_profile.address %}
+      <span id="_address_value">{{user.student_profile.address}}</span>
+      {% else %}
+      <span id="_address_value"></span>
+      {% endif %}
+    </div>
+    <div class="collection-item">
+      <h5 id="_phone">Contact number</h5>
+      {% if user.student_profile.phone %}
+      <span id="_phone_value">{{user.student_profile.phone}}</span>
+      {% else %}
+      <span id="_phone_value"></span>
+      {% endif %}
+    </div>
+    <!-- special -->
+    <div class="collection-item">
+      <h5 id="current_year">Current Year</h5>
+      <label>
+        <input type="radio" name="year" value="1" 
+        {% if year.first %}
+        checked
+        {% endif %}
+        >
+        <span>1st Year</span>
+      </label>
+      <label>
+        <input type="radio" name="year" value="2"
+        {% if year.second %}
+        checked
+        {% endif %}
+        >
+        <span>2nd Year</span>
+      </label>
+      <label>
+        <input type="radio" name="year" value="3"
+        {% if year.third %}
+        checked
+        {% endif %}
+        >
+        <span>3rd Year</span>
+      </label>
+    </div>
+    <div class="collection-item">
+      <h5 id="current_sem">Current Semester</h5>
+      <label>
+        <input type="radio" name="sem" value="1" 
+        {% if sem.first %}
+        checked
+        {% endif %}
+        >
+        <span>I SEM</span>
+      </label>
+      <label>
+        <input type="radio" name="sem" value="2"
+        {% if sem.second %}
+        checked
+        {% endif %}
+        >
+        <span>II SEM</span>
+      </label>
+      <label>
+        <input type="radio" name="sem" value="3"
+        {% if sem.third %}
+        checked
+        {% endif %}
+        >
+        <span>III SEM</span>
+      </label>
+      <label>
+        <input type="radio" name="sem" value="4"
+        {% if sem.fourth %}
+        checked
+        {% endif %}
+        >
+        <span>IV SEM</span>
+      </label>
+      <label>
+        <input type="radio" name="sem" value="5"
+        {% if sem.fifth %}
+        checked
+        {% endif %}
+        >
+        <span>V SEM</span>
+      </label>
+      <label>
+        <input type="radio" name="sem" value="6"
+        {% if sem.sixth %}
+        checked
+        {% endif %}
+        >
+        <span>VI SEM</span>
+      </label>
+    </div>
+    <div class="collection-item">
+      <h5 id="current_shift">Current Shift</h5>
+      <label>
+        <input type="radio" name="shift" value="1" 
+      {% if shift.first %}
+        checked
+      {% endif %}
+        >
+        <span>1st Shift</span>
+      </label>
+      <label>
+        <input type="radio" name="shift" value="2"
+      {% if shift.second %}
+        checked
+      {% endif %}
+        >
+        <span>2nd Shift</span>
+      </label>
+    </div>
+  </div>
+  <p  style="margin-bottom: 10%;">
+    <b>Note:</b> Please fill the above options correctly, this will allow your Tasks to be
+    appear from respective instructors!
+  </p>
+</div>
+{% endblock content %}
+{% block async %}
+<div id="__edit" class="modal">
+  <div class="modal-content">
+    <h4 style="margin-bottom: 2.5rem;" id="__edit_title"></h4>
+    <form style="margin-top: 1rem">
+      <div class="input-field">
+        <input id="_edit_value" type="text" name="_edit_value" value=""/>
+        <label for="_edit_value" id="__edit_label"></label>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a id="__edit_dismiss" class="modal-close waves-effect waves-teal btn-flat">Dismiss</a>
+    <a id="__edit_first_name" style="display: none;" class="waves-effect waves-teal btn-flat">Change</a>
+    <a id="__edit_last_name" style="display: none;" class="waves-effect waves-teal btn-flat">Change</a>
+    <a id="__edit_address" style="display: none;" class="waves-effect waves-teal btn-flat">Change</a>
+    <a id="__edit_phone" style="display: none;" class="waves-effect waves-teal btn-flat">Change</a>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('__edit')
+    let _edit_title = document.getElementById('__edit_title')
+    let _edit_label = document.getElementById('__edit_label')
+    let _edit_value = document.getElementById('_edit_value')
+    let _edit_btn = document.getElementById('__edit_dismiss')
+    let _inst = ''
+    document.getElementById('_first_name').addEventListener('dblclick', event => {
+      _edit_title.innerHTML = 'Edit First Name'
+      _edit_label.innerHTML = 'First Name'
+      _edit_btn = document.getElementById('__edit_first_name')
+      _edit_btn.style.display = 'inline'
+      const _element = document.getElementById('_first_name_value')
+      _edit_value.value = _element.innerHTML
+      current_item = {value: _element.innerHTML, name: 'first_name'}
+      M.updateTextFields()
+      _inst = M.Modal.init(modal, {
+        onCloseEnd: () => _edit_btn.style.display = 'none' 
+      })
+      _inst.open()
+    })
+    document.getElementById('_last_name').addEventListener('dblclick', event => {
+      _edit_title.innerHTML = 'Edit Last Name'
+      _edit_label.innerHTML = 'Last Name'
+      _edit_btn = document.getElementById('__edit_last_name')
+      _edit_btn.style.display = 'inline'
+      const _element = document.getElementById('_last_name_value')
+      _edit_value.value = _element.innerHTML
+      M.updateTextFields()
+      _inst = M.Modal.init(modal, {
+        onCloseEnd: () => _edit_btn.style.display = 'none'
+      })
+      _inst.open()
+    })
+    document.getElementById('_address').addEventListener('dblclick', event => {
+      _edit_title.innerHTML = 'Edit Address'
+      _edit_label.innerHTML = 'Address'
+      _edit_btn = document.getElementById('__edit_address')
+      _edit_btn.style.display = 'inline'
+      const _element = document.getElementById('_address_value')
+      _edit_value.value = _element.innerHTML
+      M.updateTextFields()
+      _inst = M.Modal.init(modal, {
+        onCloseEnd: () => _edit_btn.style.display = 'none'
+      })
+      _inst.open()
+    })
+    document.getElementById('_phone').addEventListener('dblclick', event => {
+      _edit_title.innerHTML = 'Edit Phone'
+      _edit_label.innerHTML = 'Phone Number'
+      _edit_btn = document.getElementById('__edit_phone')
+      _edit_btn.style.display = 'inline'
+      const _element = document.getElementById('_phone_value')
+      _edit_value.value = _element.innerHTML
+      _edit_value.type = 'number'
+      _edit_value.maxlength = 10
+      M.updateTextFields()
+      _inst = M.Modal.init(modal, {
+        onCloseEnd: () => {
+          _edit_btn.style.display = 'none'
+          _edit_value.type = 'text'
+          _edit_value.maxlength = 120
+        }
+      })
+      _inst.open()
+    })
+
+    // updates
+    document.getElementById('__edit_first_name').addEventListener('click', event => {
+      if (_edit_value.value.length < 5) {
+        _utils.warning('First name is shorter than 5 letters')
+      } else {
+        _utils.update(`{% url 'students-api-student-profile' %}`, {type: 'first_name', value: _edit_value.value})
+        .then(res => {
+          if (res.status === 202) {
+            _utils.success('Successfully Updated', _utils.deload)
+            _inst.close()
+          } else {
+            _utils.error(res.error)
+          }
+        })
+      }
+    })
+    document.getElementById('__edit_last_name').addEventListener('click', event => {
+      if (_edit_value.value.length < 5) {
+        _utils.warning('Last name is shorter than 5 letters')
+      } else {
+        _utils.update(`{% url 'students-api-student-profile' %}`, {type: 'last_name', value: _edit_value.value})
+        .then(res => {
+          if (res.status === 202) {
+            _utils.success('Successfully Updated', _utils.deload)
+            _inst.close()
+          } else {
+            _utils.error(res.error)
+          }
+        })
+      }
+    })
+    document.getElementById('__edit_address').addEventListener('click', event => {
+      if (_edit_value.value.length < 5) {
+        _utils.warning('Address is shorter than 5 letters')
+      } else {
+        console.log('sent', _edit_value.value);
+        _utils.update(`{% url 'students-api-student-profile' %}`, {type: 'address', value: _edit_value.value})
+        .then(res => {
+          if (res.status === 202) {
+            _utils.success('Successfully Updated', _utils.deload)
+            _inst.close()
+          } else {
+            _utils.error(res.error)
+          }
+        })
+      }
+    })
+    document.getElementById('__edit_phone').addEventListener('click', event => {
+      if (_edit_value.value.length !== 10) {
+        _utils.warning('Invalid Phone number')
+      } else {
+        _utils.update(`{% url 'students-api-student-profile' %}`, {type: 'phone', value: _edit_value.value})
+        .then(res => {
+          if (res.status === 202) {
+            _utils.success('Successfully Updated', _utils.deload)
+            _inst.close()
+          } else {
+            _utils.error(res.error)
+          }
+        })
+      }
+    })
+
+    document.getElementById('_p_file').addEventListener('change', event => {
+      const file = event.target
+      const data = new FormData()
+      data.append("image", file.files[0])
+      _utils.postFile(`{% url 'students-api-student-profile' %}`, data).then(res => {
+        if (res.status === 202) {
+          _utils.success('Successfully Updated', _utils.deload)
+        } else {
+          _utils.error(res.error)
+        }
+      })
+    })
+
+    // special
+    document.getElementsByName('year').forEach(item => item.addEventListener('change', event => {
+      let year = ''
+      document.getElementsByName('year').forEach(item => {
+        if (item.checked) {
+          year = item.value
+        }
+      })
+      _utils.update(`{% url 'students-api-student-std' %}`, {type: 'year', value: year}).then(res => {
+        if (res.status === 202) {
+          _utils.success('Successfully Updated!', _utils.deload)
+        } else {
+          _utils.error(res.error)
+        }
+      })
+    }))
+    document.getElementsByName('sem').forEach(item => item.addEventListener('change', event => {
+      let sem = ''
+      document.getElementsByName('sem').forEach(item => {
+        if (item.checked) {
+          sem = item.value
+        }
+      })
+      _utils.update(`{% url 'students-api-student-std' %}`, {type: 'sem', value: sem}).then(res => {
+        if (res.status === 202) {
+          _utils.success('Successfully Updated!', _utils.deload)
+        } else {
+          _utils.error(res.error)
+        }
+      })
+    }))
+    document.getElementsByName('shift').forEach(item => item.addEventListener('change', event => {
+      let shift = ''
+      document.getElementsByName('shift').forEach(item => {
+        if (item.checked) {
+          shift = item.value
+        }
+      })
+      _utils.update(`{% url 'students-api-student-std' %}`, {type: 'shift', value: shift}).then(res => {
+        if (res.status === 202) {
+          _utils.success('Successfully Updated!', _utils.deload)
+        } else {
+          _utils.error(res.error)
+        }
+      })
+    }))
+  })
+</script>
+<style>
+  ._profile_image {
+    display: block;
+    margin: auto;
+    height: 200px;
+    width: 200px;
+    border-radius: 50%;
+    background-image: url('{{ user.student_profile.image.url }}');
+    background-size: cover;
+  }
+  ._profile_image:hover::after {
+    content: 'Change Profile Image recommend: 4x4(16px/16px)';
+    background-color: rgba(0, 0, 0, .7);
+    color: #fff;
+    font-size: 1rem;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 50%;
+  }
+</style>
+{% endblock async %}

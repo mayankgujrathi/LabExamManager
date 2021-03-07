@@ -1,0 +1,281 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Teacher - Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="{% static 'CSS/bootstrap.css' %}">
+  <link href="{% static 'CSS/mycss.css' %}" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'CSS/fontawesome/css/fontawesome.min.css' %}"/>
+  <link rel="stylesheet" href="{% static 'CSS/animate.min.css' %}" />
+</head>
+<body>
+  {% include 'nteacher/navbar.html' %}
+
+<div id="home" style="animation:none;">
+    <div>
+      <h3 class="heading2">Welcome To Govt. PolyTechnic,Masab Tank College Tests!</h3>
+      <p class="fw-light">Where You can Create Tests, View Test Results,Download Test Results,Reconduct the Tests too.!</p>
+    </div>
+      <button id="chnsub" class="btn btn-success btn-large text-uppercase float-start" data-bs-toggle="modal" data-bs-target="#subjectpromptmodal">Change Subjects</button>
+      <br><br>
+    {% if messages %}
+      {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+          {% ifequal message.tags 'somethingWentWrong error' %}
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <strong>{{message}}</strong>,Please Go back and Check again!
+                  <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+              </div> 
+          {% endifequal %}
+          {% ifequal message.tags 'passedout error' %}
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <strong>Re-Schedule it!</strong> {{ message }} ,<br> Please Re-Schedule it.
+                  <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+              </div>
+          {% endifequal %}
+        {% endif %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              <strong>Success</strong> {{ message }}
+              <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+    {% if startedExam %}
+      {% for x in startedExam %}
+      <div class="alert-info rounded p-2 my-3">
+          <h4 class="mx-3" style="text-align:left">Running Tests!</h4>
+      </div>
+      <div class="card text-center my-3 border-secondary mx-lg-5 mx-md-0 mx-sm-0" style="animation: flipInX;animation-duration: 2s;">
+        <div class="card-header alert-secondary">
+          Total Questions - {{ x.TotalQuestions }}
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">{{ x.Subject }} {{ x.ExamName }}</h5>
+          <p class="caption1 my-0 mb-md-2 mb-sm-2"><b>Note:</b> Please click the Home Button When Exam is Completed!</p>
+            <form action"." method="post">
+                {% csrf_token %}
+                  <button class="text-decoration-none text-uppercase rounded-2 border border-0 text-danger bg-transparent fw-normal my-2 p-2 mx-3" name="stop" type="submit" value="{{ x.Subject }} {{ x.ExamName }}">Stop Test</button>
+                  <input type="hidden" value="{{ x.id }}" name="id"/>
+            </form> 
+        </div>
+        <div class="card-footer alert-secondary">Test for Shift - {{ x.Shift }}</div>
+      </div>
+      {% endfor %}
+    {% endif %}
+
+
+    <div class="alert-success rounded p-2 my-3 ">
+        <h4 class="mx-3" style="text-align:left">Previous Test Toppers!</h4>
+    </div>
+
+    {% if top4 %}
+    <div class="row mb-4 mt-5" style="justify-content: space-evenly;">
+        {% for i in top4 %}
+        <div class="col-lg-3 col-md-6 col-sm-12" style="animation: flipInY;animation-duration: 2s;">
+          <div class="card border-secondary mb-3" style="max-width: 18rem;">
+            <div class="card-header border-secondary alert-secondary">{{ i.Subject }} {{ exam }}</div>
+            <div class="card-body">
+              <h5 class="card-title text-success ">{{ i.Pin }}</h5>
+              <p class="card-text my-2">Secured {{ i.Marks }} out of {{ totalq }}<br> in {{ i.Time_Taken }} minutes</p>
+            </div>
+            <div class="card-footer border-secondary alert-secondary">Rank #{{ forloop.counter }}</div>
+          </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+      <h5>OOH!,Its Seems like You didn't Conduct Tests Till Now!.</h5>
+    {% endif %}
+
+    <div class="alert-success rounded p-2 my-3">
+        <h4 class="mx-3" style="text-align:left">Recently Created Tests!</h4>
+        <p class="mx-3" style="text-align:left">You can Start These Tests now.</p>
+    </div>
+
+      {% if messages %}
+                {% for message in messages %}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                        {% ifequal message.tags 'deleted error' %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Deleted!</strong> {{message}}
+                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+                            </button>
+                        </div>
+                        {% endifequal %}
+                          {% ifequal message.tags 'startRunning error' %}
+                          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                              <strong>Hold On!</strong> {{message}}
+                              <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+                              </button>
+                          </div> 
+                          {% endifequal %}
+                      {% endif %}
+                {% endfor %}
+      {% endif %}
+    
+    {% if createdExams %}
+    {% for qu in createdExams %}
+    <div class="card text-center my-3 border-secondary mx-lg-5 mx-md-0 mx-sm-0" style="animation: fadeIn;animation-duration: 2s;">
+      <div class="card-header alert-secondary">
+        Total Questions - {{ qu.TotalQuestions }}
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">{{ qu.Subject }} {{ qu.ExamName }}</h5>
+        <p class="card-text">Created on {{ qu.DateOfExamCreation }}</p>
+        <p class="caption1 my-0 mb-md-2 mb-sm-2"><b>Note:</b> Please click the Home Button When Exam is Started!</p>
+          <form action"." method="post" name="MainForm">
+              {% csrf_token %}
+                <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" name="start" type="submit" value="{{ qu.Subject }} {{ qu.ExamName }}" onclick="customOnloadTrigger({{ qu.TotalTime }})">Start Test Now</button>
+                <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-danger text-danger bg-transparent fw-bold my-2 p-2 mx-3" name="deletebtn" type="button" value="{{ qu.id }}" data-bs-toggle="modal" data-bs-target="#delete">Delete The Test</button>
+                <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-secondary text-secondary bg-transparent fw-bold my-2 p-2 mx-3" name="viewQuestions" type="submit" value="{{ qu.Subject }} {{ qu.ExamName }}">View Questions</button>
+                <button class="text-decoration-none text-uppercase rounded-3 border border-1 border-success text-success bg-transparent fw-bold my-2 p-2 mx-3" name="reschedule" type="button" value="{{ qu.id }}" data-bs-toggle="modal" data-bs-target="#datetime">Re-Schedule The Time</button>   
+                <input type="hidden" value="{{ qu.id }}" name="id"/>
+          </form>  
+      </div>
+      <div class="card-footer alert-secondary">Test for Shift - {{ qu.Shift }}</div>
+    </div>
+    {% endfor %}
+    {% else %}
+        <h5>No Recently Created Exams</h5>
+    {% endif %}
+
+      <p class="mt-5">View Details about completed Tests in 'View Test history' or click This..<i class="fas fa-angle-double-down icon"></i></p>
+      <button type="button" class="btn btn-outline-secondary btn-lg btn-block" onclick="location.href='{% url 'Viewtesthistory' %}'" style="width:100%">View Test History</button>
+      <!-- datetime Modal -->
+          <div class="modal fade" id="datetime" tabindex="-1" aria-labelledby="datetimeLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="datetimeLabel">ENTER DATE AND TIME FOR EXAM</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form" name="Form" method="post" action=".">
+                    {% csrf_token %}
+                  <div class="modal-body px-5">
+                      <p class="fw-light mt-4">Select Date and Time</p>
+                      <div class="form-floating">
+                        <input type="datetime-local" class="form-control" id="dateTime" placeholder="Select Date and Time" name="dateTime" required/>
+                        <label for="batch"><i>Date and Time of Exam</i></label>
+                      </div>
+                  </div>      
+                  <div class="modal-footer">
+                    <button type="submit" id="datetimesubmit" name="ok" class="text-success border-0 fs-5 text-decoration-none mx-3" >OK</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!--delete Modal -->
+          <div class="modal fade" id="delete" tabindex="-1" aria-labelledby="deleteLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="deleteLabel">DELETE THE TEST?</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form" name="Form" method="post" action=".">
+                    {% csrf_token %}
+                  <div class="modal-body px-5">
+                      <p class="fw-bold mt-2">ARE YOU SURE WANT TO DELETE THE TEST PREMANENTLY?</p>
+                  </div>      
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-success mx-3" data-bs-dismiss="modal">NO</button>
+                    <button type="submit" id="deletesubmit" name="delete" class="btn btn-danger mx-3" >YES</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!--subject prompt modal -->
+          <button type="button" style="display:none;" id="subbtn" data-bs-toggle="modal" data-bs-target="#subjectpromptmodal"></button>
+
+          <!-- Modal -->
+          <div class="modal fade" id="subjectpromptmodal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="subjectpromptmodalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="subjectpromptmodalLabel">Choose Your Subjects</h5>
+                  <button type="button" class="btn-close hidden" id="closebtn" aria-label="Close" data-bs-dismiss='modal'></button>
+                </div>
+              <form method="post" action"." name="subForm">
+              {% csrf_token %}
+                <div class="modal-body">
+                  <p class="fw-light mt-4"><b>Note:</b> Please Enter Subjects with space separated inputs.</p>
+                  <div class="input-group px-3">
+                    <span class="input-group-text">Enter Subjects You Teach</span>
+                    <div class="form-floating ">
+                      <input type="text" class="form-control" id="sub" placeholder="Enter Subjects" name="sub" required/>
+                      <label for="sub"><i>Example : python C#</i></label>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" id="subjectbtn" name="SUB" class="text-success border-0 fs-5 text-decoration-none mx-3" >OK</button>
+                  <button type="submit" id="subjectbtn1" name="UPDSUB" class="text-success border-0 fs-5 text-decoration-none mx-3" >Update</button>
+                </div>
+              </form>
+              </div>
+            </div>
+          </div>
+</div>
+    <script src="{% static 'JS/jquery.min.js' %}"></script>
+    <script src="{% static 'CSS/fontawesome/js/all.min.js' %}" ></script>
+    <script src="{% static 'JS/popper.min.js' %}" ></script>
+    <script src="{% static 'JS/bootstrap.bundle.js' %}" ></script>
+    <script src="{% static 'JS/bootstrap1.min.js' %}"></script>
+    <script src="{% static 'JS/myjs.js' %}" ></script>
+    <script>
+    !function(){
+        document.addEventListener('DOMContentLoaded',function(){
+          let id = undefined;
+          let idDelete = undefined;
+          let sub = ({{ subs|safe }})['subject']; 
+          document.getElementById('closebtn').style.display = "none";
+          document.getElementById('subjectbtn1').style.display = "none"
+          document.getElementsByName('reschedule').forEach(item => item.addEventListener('click',function(){
+              id = item.value
+          }))
+          document.getElementById('datetimesubmit').addEventListener('click',function(){
+            let datetime =  document.forms['Form']['dateTime'].value
+            document.getElementById('datetimesubmit').setAttribute('value',id)
+            if(datetime && id){
+              document.getElementById('datetimesubmit').setAttribute('data-bs-dismiss','modal')
+            }
+          })
+
+          document.getElementsByName('deletebtn').forEach(item => item.addEventListener('click',function(){
+            idDelete = item.value
+          }))
+          document.getElementById('deletesubmit').addEventListener('click',function(){
+            document.getElementById('deletesubmit').setAttribute('value',idDelete)
+            if(idDelete){
+              document.getElementById('deletesubmit').setAttribute('data-bs-dismiss','modal')
+            }
+          })
+            if(sub.toUpperCase() === "none".toUpperCase()){
+                document.getElementById('subbtn').click()
+            }
+            document.getElementById('subjectbtn').addEventListener('click',function(){
+              let enteredsub = document.forms['subForm']['sub'].value
+                if(enteredsub){
+                  //alert(enteredsub)
+                  document.getElementById('subjectbtn').setAttribute('data-bs-dismiss','modal');    
+                  document.getElementById('closebtn').style.display = "block";
+                }
+            })
+            document.getElementById('chnsub').addEventListener('click',function(){
+              document.getElementById('closebtn').style.display = "block";
+              document.getElementById('subjectbtn1').style.display = "block";
+              document.getElementById('subjectbtn').style.display = "none";
+            })
+        })
+    }()
+    </script>
+</body>
+</html>

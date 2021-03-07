@@ -1,0 +1,106 @@
+{% extends 'pages/baseStudents.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="collection">
+        <div class="collapsible-header">
+            <h5 class="responsive-text">
+                <i onclick="_utils.mov(`{% url 'students-teaches' %}`)"
+                    class="material-icons left clickable teal-text">arrow_back</i>
+                {% if not teacher.first_name or not teacher.last_name%}
+                {{teacher.username}}
+                {% endif %}
+                {{teacher.first_name}} {{teacher.last_name}}
+            </h5>
+        </div>
+        {% if tasks %}
+        {% for task in tasks %}
+        <div class="collection-item">
+            <h5><span id="{{task.id}}_title">{{task.title}}</span> (for {{task.total_marks}} Marks)</h5>
+            <p>{{task.description}}</p>
+            <br />
+            <button id="{{task.id}}"
+            class="_task_submit_btn btn btn-flat white waves-effect waves-green teal-text">
+            Submit Work
+            </button>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="collection-item">
+            <p class="center-align">no task found</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<!-- create -->
+<div id="__create_submit" class="modal modal-fixed-footer">
+  <div class="modal-content">
+      <h4 id="_create_submit_title" style="padding-bottom: 2.5rem;"></h4>
+        <div class="file-field input-field">
+            <div class="btn">
+                <span>Images</span>
+                <input type="file" name="image" id="_create_files" accept="image/*" multiple>
+            </div>
+            <div class="file-path-wrapper">
+                <input class="file-path validate" type="text" placeholder="Upload image">
+            </div>
+        </div>
+        <div class="input-field" style="margin-top: 1rem;">
+          <textarea id="_create_description" class="materialize-textarea"></textarea>
+          <label for="_create_description">Description</label>
+        </div>
+  </div>
+  <div class="modal-footer">
+    <a class="modal-close waves-effect waves-teal btn-flat">Dismiss</a>
+    <a id="submit_create_archive" class="waves-effect waves-teal btn-flat">Submit</a>
+  </div>
+</div>
+{% endblock content %}
+
+{% block async %}
+<script>
+    !function(){
+        document.addEventListener('DOMContentLoaded', () => {
+            let current_item_id, new_description, new_file
+            const _c_inst = M.Modal.init(document.getElementById('__create_submit'))
+            document.querySelectorAll('._task_submit_btn').forEach(item => item
+            .addEventListener('click', event => {
+                current_item_id = event.target.id
+                document.getElementById('_create_submit_title').innerHTML = document.getElementById(`${current_item_id}_title`).innerHTML
+                _c_inst.open()
+            }))
+            document.getElementById('submit_create_archive').addEventListener('click', event => {
+                new_description = document.getElementById('_create_description').value
+                new_file = document.getElementById('_create_files')
+                if (new_description.length < 5) {
+                    _utils.warning('Note is shorter than 5 letters')
+                } else if (new_file.files.length < 1) {
+                    _utils.warning('Please attach an Image')
+                } else {
+                    const files = new FormData()
+                    // files.append('image', new_file.files[0])
+                    for(let i = 0; i < new_file.files.length; i++) {
+                        files.append(`${i}`, new_file.files[i])
+                        console.log(new_file.files[i]);
+                    }
+                    // files.append('images', new_file.files)
+                    files.append('description', new_description)
+                    files.append('task_id', current_item_id)
+                    _utils.postFile(`{% url 'students-api-student-task-update' %}`, files).then(res => {
+                        if (res.status === 200) {
+                            _utils.success('Successfully Submitted', _utils.deload)
+                            _c_inst.close()
+                        } else if (res.status === 202) {
+                            _utils.success('Successfully Updated Previous Submit', _utils.deload)
+                            _c_inst.close()
+                        }else {
+                            _utils.error(`${res.error} ${res.status}`)
+                        }
+                    })
+                }
+            })
+        })
+    }()
+</script>
+{% endblock async %}

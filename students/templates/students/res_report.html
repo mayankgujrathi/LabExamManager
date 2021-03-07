@@ -1,0 +1,127 @@
+{% extends 'pages/baseStudents.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="margin-bottom: 5rem;">
+    <i class="material-icons teal-text clickable" 
+    style="margin-top: 1rem;"
+    onclick="_utils.mov(`{% url 'students-reports' %}`)">arrow_back</i>
+    <i class="material-icons blue-text clickable right" 
+    style="margin-top: 1rem;"
+    onclick="window.print()">print</i>
+    <div class="section-to-print">
+        <span class="block center-align light">This page data is not persistent, might change for many reasons, it is recomended to take a print for a persistent copy.</span>
+        <h5 class="center-align">Report for the Lab Conducted by 
+            {% if not teacher.first_name or not teacher.last_name %}
+                ({{teacher.username}})
+            {% endif %}
+            {{ teacher.first_name }} {{teacher.last_name}}
+        </h5>
+        <div draggable="false" class="rounded center-align _profile_image"></div>
+        <h6 class="center-align">
+            {% if not user.last_name or not user.first_name %}
+                (user.username)
+            {% else %}
+                {{user.first_name}} {{user.last_name}}
+            {% endif %}
+        </h6>
+        <span class="block center-align">({{user.username}})</span>
+        <span class="block center-align">{{user.email}}</span>
+        <ul class="collection">
+            <li class="collection-item">
+                <p style="font-size: large;">In the Year <span class="right">{{user.student_profile.current_year}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">In the Semester <span class="right">{{user.student_profile.current_semester}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">In the Shift <span class="right">{{user.student_profile.current_shift}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">You have attended tasks <span class="right">{{corrected_num_tasks}}/{{total_num_tasks}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">You have got marks (only for attended)  <span class="right">{{total_marks_got}}/{{total_marks_attend_got}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">You have got marks (all tasks)  <span class="right">{{total_marks_got}}/{{total_marks_all}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">You have got average marks (only for attended)  <span class="right">{{avg_marks_got}}/{{avg_marks_attend_got}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">You have got average marks (all tasks)  <span class="right">{{avg_marks_got}}/{{avg_marks_all}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">Over all Marks Percentage (only for attended)  <span class="right">{{precentage_attended}}%</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">Over all Marks Percentage (all tasks)  <span class="right">{{precentage_all}}%</span></p>
+            </li>
+        </ul>
+    </div>
+    <!-- <div class="section-to-print" style="visibility: hidden;">
+        <h5 class="center-align">Report for the Lab Conducted by 
+            {% if not teacher.first_name or not teacher.last_name %}
+                ({{teacher.username}})
+            {% endif %}
+            {{ teacher.first_name }} {{teacher.last_name}}
+        </h5>
+        <h6 class="center-align">
+            {% if not user.last_name or not user.first_name %}
+                (user.username)
+            {% else %}
+                {{user.first_name}} {{user.last_name}}
+            {% endif %}
+        </h6>
+        <span class="block center-align">({{user.username}})</span>
+        <span class="block center-align">{{user.email}}</span>
+        <ul class="collection">
+            <li class="collection-item">
+                <p style="font-size: large;">In the Year <span class="right">{{user.student_profile.current_year}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">In the Semester <span class="right">{{user.student_profile.current_semester}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">In the Shift <span class="right">{{user.student_profile.current_shift}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">You have attended tasks <span class="right">{{corrected_num_tasks}}/{{total_num_tasks}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">You have got marks (only for attended)  <span class="right">{{total_marks_got}}/{{total_marks_attend_got}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">You have got marks (all tasks)  <span class="right">{{total_marks_got}}/{{total_marks_all}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">You have got average marks (only for attended)  <span class="right">{{avg_marks_got}}/{{avg_marks_attend_got}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">You have got average marks (all tasks)  <span class="right">{{avg_marks_got}}/{{avg_marks_all}}</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">Over all Marks Percentage (only for attended)  <span class="right">{{precentage_attended}}%</span></p>
+            </li>
+            <li class="collection-item">
+                <p style="font-size: large;">Over all Marks Percentage (all tasks)  <span class="right">{{precentage_all}}%</span></p>
+            </li>
+        </ul>
+    </div> -->
+</div>
+{% endblock content %}
+
+{% block async %}
+<style>
+  ._profile_image {
+    display: block;
+    margin: auto;
+    height: 200px;
+    width: 200px;
+    border-radius: 50%;
+    background-image: url('{{ user.student_profile.image.url }}');
+    background-size: cover;
+  }
+</style>
+{% endblock async %}

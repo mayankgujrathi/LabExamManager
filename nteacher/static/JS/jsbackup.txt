@@ -1,0 +1,10 @@
+if (e.name == "subject"){
+    for (let index = 0; index < $testnames.length; index++) {
+        if(e.value == $testnames[index]){
+          document.querySelector("p").classList.remove("none")
+          alert(e.value,$testnames[index])
+        }
+          //  alert(e.name)
+        else document.querySelector("p").classList.add("none")
+       }
+    }

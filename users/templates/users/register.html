@@ -1,0 +1,28 @@
+{% extends 'pages/basePage.html' %}
+{% load static %}
+{% block body %}
+<div class="container">
+  <h4 class="center-align">Sign Up</h4>
+  <img draggable="false" class="rounded center-align" style="display: block; margin: auto; height: 20%; width: 20%; min-width: 8rem;" src="{% static 'users/images/profile-default.png' %}"  />
+  <style>
+    form #id_username {
+      text-transform: lowercase;
+    }
+  </style>
+  <form action="" method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+   </div>
+   <div class="row container" style="margin-top: 2rem;">
+      <button type="submit" style="display: block; width: 100%;" class="waves-effect waves-light btn btn-large">Sign Up now!</button>
+      <span class="grey-text block" style="margin-top: 1rem;">already have an account? 
+        <button 
+          style="border: none; outline: none; background-color: #fff;" 
+          class="blue-text clickable" 
+          onclick="_utils.mov(`{% url 'users-login' %}`)"
+          >continue.</button>
+      </span>
+   </div>
+ </form>
+</div>
+{% endblock body %}

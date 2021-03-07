@@ -1,0 +1,435 @@
+{% extends 'pages/baseAdmin.html' %}
+{% load static %}
+
+{% block content %} 
+<div class="container">
+  <ul class="collection">
+    <li class="collapsible-header">
+      <h4 class="responsive-text">
+        <i onclick="_utils.mov(`{% url 'admins-task-archives' %}`)" class="material-icons teal-text">arrow_back</i>{{ banner }}
+      </h4>
+    </li>
+    {% if tasks %}
+    {% for task in tasks %}
+    <li class="collection-item" id="{{task.task.id}}">
+      <div>
+        <h5 class="responsive-text" style="padding-bottom: .25rem;"
+        ><span id="{{task.task.id}}_title">{{task.task.title}}</span>
+         <span class="blue-text">(for <span id="{{task.task.id}}_marks">{{task.task.total_marks}}</span> Marks)</span>
+         <!-- <span class="green-text">(got <span id="{{task.task.id}}_res">{{task.res_count}}</span> Students)</span> -->
+      </h5>
+        <span id="{{task.task.id}}_description">{{task.task.description}}</span>
+        <br/>
+        <p class="teal-text" style="margin-top: 1rem;">
+        For Students of <span id="{{task.task.id}}_year">{{task.task.for_year}}</span> Year,
+        <span id="{{task.task.id}}_sem">{{task.task.for_sem}}</span> Semester and
+        <span id="{{task.task.id}}_shift">{{task.task.for_shift}}</span> Shift.
+        </p>
+        <br/>
+
+        <button id="{{task.task.id}}" 
+          data-position="left" 
+          data-tooltip="Edit Task" 
+          class="clickable tooltipped btn btn-flat blue-text waves-effect waves-blue white __edit_task_btn"
+        >
+        <!-- <i id="{{task.id}} __edit_task_btn" class="material-icons left">edit</i>edit -->
+        edit
+        </button>
+        <button id="{{task.task.id}}"
+          data-position="bottom" 
+          data-tooltip="Start Session" 
+          class="clickable tooltipped btn btn-flat {% if task.task.is_active %} red-text {% else %}green-text {% endif %} waves-effect waves-blue white __toggler_session"
+        >
+        <!-- <i id="{{task.id}}" class="material-icons left __toggler_session __t_icon">
+          {% if task.is_active %}
+          stop
+          {% else %}
+          play_arrow
+          {% endif %}
+        </i> -->
+        <!-- <span id="{{task.id}}" class="__toggler_session __t_text"> -->
+          {% if task.task.is_active %}
+          Stop
+          {% else %}
+          Start
+          {% endif %}
+        <!-- </span> -->
+        </button>
+        <button id="{{task.task.id}}"
+          data-position="bottom" 
+          data-tooltip="View & Correct Student Responses"
+          onclick="location += '{{task.task.id}}'"
+          class="clickable tooltipped btn btn-flat teal-text waves-effect waves-blue white"
+        >{{task.res_count}} Responses</button>
+      </div>
+    </li>
+    {% endfor %}
+    {% else %}
+    <li class="collection-item">
+      <p class="center-align">No Tasks</p>
+    </li>
+    {% endif %}
+  </ul>
+</div>
+{% endblock content %}
+{% block async %}
+<div class="fixed-action-btn">
+  <button onclick="_utils.mov(`/admins_archive_report/{{archive_name}}`)" style="right: 0; bottom: 50px" class="btn-floating blue">
+    <i class="large material-icons">assignment_ind</i>
+  </button>
+</div>
+<!-- floating -->
+<div  class="fixed-action-btn">
+  <button class="modal-trigger btn-floating" data-target="create_task">
+    <i class="large material-icons">library_add</i>
+  </button>
+</div>
+<!-- form modal -->
+<div id="create_task" class="modal modal-fixed-footer">
+  <div class="modal-content">
+    <h4 style="margin-bottom: 2.5rem;">New Task</h4>
+    <!-- specials -->
+    <span style="font-weight: 400; font-size: medium;margin-bottom: .5rem;"
+    class="block grey-text text-darken-1">Select Year</span>
+    {% if teach_years.first %}
+    <label>
+      <input type="radio" name="year" value="1" checked>
+      <span>1st Year</span>
+    </label>
+    {% endif %}
+    {% if teach_years.second %}
+    <label>
+      <input type="radio" name="year" value="2">
+      <span>2nd Year</span>
+    </label>
+    {% endif %}
+    {% if teach_years.third %}
+    <label>
+      <input type="radio" name="year" value="3">
+      <span>3rd Year</span>
+    </label>
+    {% endif %}
+    <span style="font-weight: 400; font-size: medium;margin-bottom: .5rem;"
+    class="block grey-text text-darken-1">Select Semester</span>
+    {% if teach_sem.first %}
+    <label>
+      <input type="radio" name="sem" value="1" checked>
+      <span>I SEM</span>
+    </label>
+    {% endif %}
+    {% if teach_sem.second %}
+    <label>
+      <input type="radio" name="sem" value="2">
+      <span>II SEM</span>
+    </label>
+    {% endif %}
+    {% if teach_sem.third %}
+    <label>
+      <input type="radio" name="sem" value="3">
+      <span>III SEM</span>
+    </label>
+    {% endif %}
+    {% if teach_sem.fourth %}
+    <label>
+      <input type="radio" name="sem" value="4">
+      <span>IV SEM</span>
+    </label>
+    {% endif %}
+    {% if teach_sem.fifth %}
+    <label>
+      <input type="radio" name="sem" value="5">
+      <span>V SEM</span>
+    </label>
+    {% endif %}
+    {% if teach_sem.sixth %}
+    <label>
+      <input type="radio" name="sem" value="6">
+      <span>VI SEM</span>
+    </label>
+    {% endif %}
+    <span style="font-weight: 400; font-size: medium;margin-bottom: .5rem;"
+    class="block grey-text text-darken-1">Select Shift</span>
+    <label>
+      <input type="radio" name="shift" value="1" checked>
+      <span>1st Shift</span>
+    </label>
+    <label>
+      <input type="radio" name="shift" value="2">
+      <span>2nd Shift</span>
+    </label>
+    <!-- end specials -->
+    <form style="margin-top: 1rem">
+      <div class="input-field">
+        <input id="_task_title" type="text" name="_task_title" />
+        <label for="_task_title">Title</label>
+      </div>
+      <div class="input-field">
+        <textarea class="materialize-textarea" name="_task_description" id="_task_description"></textarea>
+        <label for="_task_description">Description</label>
+      </div>
+      <div class="input-field">
+        <input id="_task_marks" type="number" name="_task_marks" />
+        <label for="_task_marks">Marks</label>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a class="modal-close waves-effect waves-teal btn-flat">Cancel</a>
+    <a id="submit_create_archive" class="waves-effect waves-teal btn-flat">Add</a>
+  </div>
+</div>
+<!-- form modal update -->
+<div id="update_task" class="modal modal-fixed-footer">
+  <div class="modal-content">
+    <h4 style="margin-bottom: 2.5rem;">Edit Task</h4>
+    <!-- specials -->
+    <span style="font-weight: 400; font-size: medium;margin-bottom: .5rem;"
+    class="block grey-text text-darken-1">Select Year</span>
+    {% if teach_years.first %}
+    <label>
+      <input type="radio" name="u_year" value="1" id="year_1" checked>
+      <span>1st Year</span>
+    </label>
+    {% endif %}
+    {% if teach_years.second %}
+    <label>
+      <input type="radio" name="u_year"  id="year_2"value="2">
+      <span>2nd Year</span>
+    </label>
+    {% endif %}
+    {% if teach_years.third %}
+    <label>
+      <input type="radio" name="u_year"  id="year_3"value="3">
+      <span>3rd Year</span>
+    </label>
+    {% endif %}
+    <span style="font-weight: 400; font-size: medium;margin-bottom: .5rem;"
+    class="block grey-text text-darken-1">Select Semester</span>
+    {% if teach_sem.first %}
+    <label>
+      <input type="radio" name="u_sem" value="1" id="sem_1" checked>
+      <span>I SEM</span>
+    </label>
+    {% endif %}
+    {% if teach_sem.second %}
+    <label>
+      <input type="radio" name="u_sem" id="sem_2" value="2">
+      <span>II SEM</span>
+    </label>
+    {% endif %}
+    {% if teach_sem.third %}
+    <label>
+      <input type="radio" name="u_sem" id="sem_3" value="3">
+      <span>III SEM</span>
+    </label>
+    {% endif %}
+    {% if teach_sem.fourth %}
+    <label>
+      <input type="radio" name="u_sem" id="sem_4" value="4">
+      <span>IV SEM</span>
+    </label>
+    {% endif %}
+    {% if teach_sem.fifth %}
+    <label>
+      <input type="radio" name="u_sem" id="sem_5" value="5">
+      <span>V SEM</span>
+    </label>
+    {% endif %}
+    {% if teach_sem.sixth %}
+    <label>
+      <input type="radio" name="u_sem" id="sem_6" value="6">
+      <span>VI SEM</span>
+    </label>
+    {% endif %}
+    <span style="font-weight: 400; font-size: medium;margin-bottom: .5rem;"
+    class="block grey-text text-darken-1">Select Shift</span>
+    <label>
+      <input type="radio" name="u_shift" value="1" id="shift_1" checked>
+      <span>1st Shift</span>
+    </label>
+    <label>
+      <input type="radio" name="u_shift" id="shift_2" value="2">
+      <span>2nd Shift</span>
+    </label>
+    <!-- end specials -->
+    <form style="margin-top: 1rem">
+      <div class="input-field">
+        <input id="_update_task_title" type="text" name="_update_task_title" />
+        <label class="active" for="_update_task_title">Title</label>
+      </div>
+      <div class="input-field">
+        <textarea class="materialize-textarea" name="_update_task_description" id="_update_task_description"></textarea>
+        <label for="_update_task_description">Description</label>
+      </div>
+      <div class="input-field">
+        <input id="_update_task_marks" type="number" name="_update_task_marks" />
+        <label class="active" for="_update_task_marks">Marks</label>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a class="modal-close waves-effect waves-teal btn-flat">Cancel</a>
+    <a id="submit_delete_task" class="waves-effect waves-red btn-flat">Delete</a>
+    <a id="submit_update_task" class="waves-effect waves-teal btn-flat">Update</a>
+  </div>
+</div>
+<script>
+  !function(){
+    document.addEventListener('DOMContentLoaded', () => {
+      // Modal create_branch
+      const _inst = M.Modal.init(document.getElementById('create_task'))
+      document.addEventListener('keydown', event => {
+        if (event.ctrlKey && event.key === 'n') {
+          _inst.open()
+        }
+      })
+      // Toggle Session
+      document.querySelectorAll('.__toggler_session').forEach(element => element
+      .addEventListener('click', event => {
+        const archive = window.location.pathname.split('/')[window.location.pathname.split('/').length -1].length > 0 ? 
+          decodeURI(window.location.pathname.split('/')[window.location.pathname.split('/').length -1]) : 
+          decodeURI(window.location.pathname.split('/')[window.location.pathname.split('/').length -2])
+        const id = event.target.id
+        _utils.update(`{% url 'admins-api-task-curd' %}`, {
+          task_id: id,
+          toggle_active: true,
+          archive: archive
+        }).then(res => {
+          if (res.status === 202) {
+            _utils.success(`Successfully ${event.target.innerHTML}ed`, () => _utils.deload(0))
+          } else {
+            _utils.error(res.error)
+          }
+        })
+      }))
+
+      document.getElementById('submit_create_archive').addEventListener('click', event => {
+        const title = document.getElementById('_task_title')
+        const description = document.getElementById('_task_description')
+        const marks = document.getElementById('_task_marks')
+        if (title.value.length <= 5) {
+          _utils.warning('The Title is shorter than 5 letters')
+        } else if (description.value.length <= 10) {
+          _utils.warning('The Description is shorter than 10 letters')
+        } else {
+          const archive = window.location.pathname.split('/')[window.location.pathname.split('/').length -1].length > 0 ? 
+            decodeURI(window.location.pathname.split('/')[window.location.pathname.split('/').length -1]) : 
+            decodeURI(window.location.pathname.split('/')[window.location.pathname.split('/').length -2])
+          let year, sem, shift;
+          document.getElementsByName('year').forEach(item => {
+            if (item.checked) {
+              year = item.value
+            }
+          })
+          document.getElementsByName('sem').forEach(item => {
+            if (item.checked) {
+              sem = item.value
+            }
+          })
+          document.getElementsByName('shift').forEach(item => {
+            if (item.checked) {
+              shift = item.value
+            }
+          })
+          console.log(year, sem, shift);
+          _utils.post(`{% url 'admins-api-task-curd' %}`, {
+            title: title.value,
+            description: description.value,
+            marks: marks.value,
+            archive: archive,
+            year, sem, shift
+          })
+          .then(res => {
+            if (res.status === 200) {
+              _inst.close()
+              title.value = description.value = ''
+              _utils.success('The task have been saved', _utils.deload)
+            } else {
+              _utils.error(res.error)
+            }
+          })
+        }
+      })
+
+      // Update models
+      let current_item_id = ''
+      let year, sem, shift, title, description, marks
+      const _update_inst = M.Modal.init(document.getElementById('update_task'))
+      document.getElementById('submit_update_task').addEventListener('click', event => {
+        const archive = window.location.pathname.split('/')[window.location.pathname.split('/').length -1].length > 0 ? 
+          decodeURI(window.location.pathname.split('/')[window.location.pathname.split('/').length -1]) : 
+          decodeURI(window.location.pathname.split('/')[window.location.pathname.split('/').length -2])
+        let _year, _sem, _shift;
+        document.getElementsByName('u_year').forEach(item => {
+          if (item.checked) {
+            _year = item.value
+          }
+        })
+        document.getElementsByName('u_sem').forEach(item => {
+          if (item.checked) {
+            _sem = item.value
+          }
+        })
+        document.getElementsByName('u_shift').forEach(item => {
+          if (item.checked) {
+            _shift = item.value
+          }
+        })
+        _utils.update(`{% url 'admins-api-task-curd' %}`, {
+          title: document.getElementById('_update_task_title').value,
+          description: document.getElementById('_update_task_description').value,
+          marks: document.getElementById('_update_task_marks').value,
+          year: _year,
+          archive: archive,
+          sem: _sem, 
+          shift: _shift,
+          task_id: current_item_id
+        }).then(res => {
+          if(res.status === 202) {
+            _update_inst.close()
+            _utils.success('Task Updated!', _utils.deload)
+          } else {
+            _utils.error(res.error)
+          }
+        })
+      })
+      document.getElementById('submit_delete_task').addEventListener('click', event => {
+        if (current_item_id) {
+          _update_inst.close()
+          M.toast({
+            html: `<i class="material-icons yellow-text">warning</i>&ensp;Operation can't be reverted<button id="__delete_final" class="btn-flat toast-action">Delete</button>`,
+            classes: 'rounded'
+          })
+          document.getElementById('__delete_final').addEventListener('click', event => {
+            _utils.delete(`{% url 'admins-api-task-curd' %}`, {task_id: current_item_id})
+            .then(res => {
+              if (res.status === 202) {
+                M.Toast.dismissAll()
+                setTimeout(() => {
+                  _utils.success(`Task has been deleted!`, _utils.deload)
+                }, 380)
+              } else {
+                _utils.error(res.error)
+              }
+            })
+          })
+        }
+      })
+      document.querySelectorAll('.__edit_task_btn').forEach(item => item.addEventListener('click', event => {
+        current_item_id = event.target.id
+        document.getElementById('_update_task_title').value = title = document.getElementById(`${current_item_id}_title`).innerHTML
+        document.getElementById('_update_task_description').value = description = document.getElementById(`${current_item_id}_description`).innerHTML
+        document.getElementById('_update_task_marks').value = marks = document.getElementById(`${current_item_id}_marks`).innerHTML
+        year = document.getElementById(`${current_item_id}_year`)
+        document.getElementById(`year_${year.innerHTML}`).checked = "checked"
+        sem = document.getElementById(`${current_item_id}_sem`)
+        document.getElementById(`sem_${sem.innerHTML}`).checked = "checked"
+        shift = document.getElementById(`${current_item_id}_shift`)
+        document.getElementById(`shift_${shift.innerHTML}`).checked = "checked"
+        M.updateTextFields()
+        _update_inst.open()
+      }))
+    })
+  }()
+</script>
+{% endblock async %}
