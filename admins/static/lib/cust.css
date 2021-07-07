@@ -1,0 +1,103 @@
+* {
+  user-select: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body::-webkit-scrollbar, div::-webkit-scrollbar {
+  width: 0.5rem;
+}
+body::-webkit-scrollbar-thumb, div::-webkit-scrollbar-thumb {
+  background-color: rgb(0, 150, 136);
+  border-radius: 0.2rem;
+}
+body::-webkit-scrollbar-track, div::-webkit-scrollbar-track {
+  background-color: rgba(0, 150, 136, 0.4);
+}
+
+::-webkit-scrollbar {
+  width: 0.5rem;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgb(0, 150, 136);
+  border-radius: 0.2rem;
+}
+::-webkit-scrollbar-track {
+  background-color: rgba(0, 150, 136, 0.4);
+}
+::selection {
+  background-color: rgba(0, 150, 136, 0.2);
+}
+
+/* Utils */
+.selectable {
+  user-select: text;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.block {
+  display: block;
+}
+.tabs .tab a {
+  color: rgba(38, 166, 154, 0.7);
+  /*Custom Text Color*/
+}
+
+.tabs .tab a:hover {
+  color:#26a69a;
+  /*Custom Color On Hover*/
+}
+
+.tabs .tab a:focus.active {
+  color:#26a69a;
+  /*Custom Text Color While Active*/
+  background-color: rgba(38, 166, 154, 0.2);
+  /*Custom Background Color While Active*/
+}
+
+.tabs .tab a.active {
+  color:rgb(0, 150, 136);
+}
+
+.tabs .indicator {
+  background-color:#26a69a;
+  /*Custom Color Of Indicator*/
+}
+
+.errorlist {
+  display: none;
+}
+
+.responsive-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+/* for prints */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .section-to-print, .section-to-print * {
+    visibility: visible;
+  }
+  .section-to-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+
+@media print
+{
+    * {-webkit-print-color-adjust:exact;}
+}
